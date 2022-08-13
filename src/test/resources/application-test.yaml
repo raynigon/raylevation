@@ -1,0 +1,2 @@
+app.raylevation.db:
+  path: "src/test/resources/database/simple/"

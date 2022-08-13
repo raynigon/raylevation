@@ -1,0 +1,9 @@
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveClassifier.set('sources')
+}
+
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    from "$buildDir/dokka/javadoc"
+    archiveClassifier.set('javadoc')
+}

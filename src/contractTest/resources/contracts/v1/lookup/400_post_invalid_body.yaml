@@ -1,0 +1,15 @@
+name: Get elevation for location with invalid request body
+request:
+  url: /api/v1/lookup
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    points: []
+response:
+  status: 400
+  headers:
+    Content-Type: application/json
+  body:
+    status: BAD_REQUEST
+    message: InvalidBody

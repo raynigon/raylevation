@@ -1,0 +1,29 @@
+name: CI - Codacy
+
+on: [ "push" ]
+
+jobs:
+  codacy-analysis-cli:
+    if: github.actor != 'dependabot[bot]'
+    name: Codacy Analysis CLI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Create build folder
+        run: mkdir -p build/
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+        with:
+          project-token: ${{ secrets.CODACY_TOKEN }}
+          upload: true
+          max-allowed-issues: 2147483647
+          output: build/results.sarif
+          format: sarif
+
+      - name: Upload SARIF results file
+        uses: github/codeql-action/upload-sarif@main
+        with:
+          sarif_file: build/results.sarif

@@ -1,0 +1,80 @@
+
+signing {
+    required {
+        findProperty("signingKey") != null
+    }
+    String signingKey = findProperty("signingKey")
+    String signingPassword = findProperty("signingPassword")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "OSSRH" // OSS Repository Hosting
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("OSSRH_USERNAME") ?: null
+                password = System.getenv("OSSRH_PASSWORD") ?: null
+            }
+
+        }
+    }
+    publications {
+        basic(MavenPublication) {
+            artifactId = project.name
+
+            artifact project.tasks.jar
+            artifact project.tasks.bootJar
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def rootNode = asNode()
+                rootNode.children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+
+                    name project.name
+                    description "The raylevation project provides an interface to access elevation information"
+                    url 'https://raylevation.raynigon.com/'
+                    issueManagement {
+                        system 'GitHub'
+                        url 'https://github.com/raynigon/raylevation/issues'
+                    }
+                    licenses {
+                        license {
+                            name 'Apache-2.0'
+                            url 'https://opensource.org/licenses/Apache-2.0'
+                        }
+                    }
+                    scm {
+                        url 'https://github.com/raynigon/raylevation/'
+                        connection 'scm:git:git://github.com/raynigon/raylevation.git'
+                        developerConnection 'scm:git:ssh://git@github.com/raynigon/raylevation.git'
+                    }
+                    developers {
+                        developer {
+                            id 'raynigon'
+                            name 'Simon Schneider'
+                            email 'opensource@raynigon.de'
+                        }
+                    }
+                }
+
+                rootNode.remove((Node) ((Node) rootNode).get("dependencyManagement").get(0))
+                def dependenciesNode = rootNode.appendNode('dependencies')
+
+                def addDependency = { dependency, scope ->
+                    dependenciesNode.appendNode('dependency').with {
+                        appendNode('groupId', dependency.group)
+                        appendNode('artifactId', dependency.name)
+                        appendNode('version', dependency.version)
+                        appendNode('scope', scope)
+                    }
+                }
+                project.configurations.implementation.dependencies.each { addDependency(it, 'compile') }
+            }
+        }
+    }
+}

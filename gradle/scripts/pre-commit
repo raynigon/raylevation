@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "*****Running Formatter******"
+
+git stash -q --keep-index
+./gradlew ktlintFormat
+status=$?
+git stash pop -q
+
+echo "*****Done formatting******"
+
+exit $status

@@ -1,0 +1,6 @@
+tasks.create("installLocalGitHooks", Copy) {
+    group = "build setup"
+    from(new File(rootProject.rootDir, "gradle/scripts/pre-commit"))
+    into(new File(rootProject.rootDir, ".git/hooks"))
+    fileMode = 775
+}

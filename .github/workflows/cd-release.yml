@@ -1,0 +1,106 @@
+name: CD - Release
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build Release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: "Setup Java JDK"
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+      - name: Build base image
+        run: |
+          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.4.3 .
+      - id: vars
+        name: "Determine Tag Name"
+        run: |
+          VERSION_LINE=$(cat gradle.properties | grep "version=")
+          CURRENT_VERSION=${VERSION_LINE//version=/}
+          TAG_VERSION=v${CURRENT_VERSION//-SNAPSHOT/}
+          echo ::set-output name=version::$CURRENT_VERSION
+          echo ::set-output name=tag::$TAG_VERSION
+      - name: "Prepare Git"
+        run: |
+          git config --global user.email "84719472+raynigon-bot@users.noreply.github.com"
+          git config --global user.name "raynigon[bot]"
+          git checkout -b release
+      - name: "Publish Artifacts"
+        uses: eskatos/gradle-command-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12 #v2.2.1
+        with:
+          arguments: ":release -Prelease.useAutomaticVersion=true -x check"
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+        env:
+          GITHUB_USERNAME: raynigon
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_KEY_PASSPHRASE }}
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_NAME: ghcr.io/raynigon/raylevation
+          COMMIT_HASH: ${{ github.sha }}
+      - name: Copy Assets
+        run: |
+          mkdir -p build/assets/
+          cp build/libs/*.jar build/assets/
+          cp build/jib-image.tar build/assets/raylevation-server-${{ steps.vars.outputs.version }}-docker.tar
+      - id: content
+        name: Create Release Content
+        uses: raynigon/release-documentation@main
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          latest: "${{ steps.vars.outputs.tag }}"
+          template: |
+            # What's Changed
+            <!-- Features & Enhancements -->
+            {{#pull_requests.feature.length}}
+            ## 🚀 Features & Enhancements
+            {{#pull_requests.feature}}
+            * {{ title }} PR: #{{ number }}
+            {{/pull_requests.feature}}
+            {{/pull_requests.feature.length}}
+            <!-- Bug Fixes -->
+            {{#pull_requests.bug.length}}
+            ## 🐛 Bug Fixes
+            {{#pull_requests.bug}}
+            * {{ title }} PR: #{{ number }}
+            {{/pull_requests.bug}}
+            {{/pull_requests.bug.length}}
+            <!-- Documentation -->
+            {{#pull_requests.documentation.length}}
+            ## 📖 Documentation
+            {{#pull_requests.documentation}}
+            * {{ title }} PR: #{{ number }}
+            {{/pull_requests.documentation}}
+            {{/pull_requests.documentation.length}}
+            <!-- Housekeeping -->
+            {{#pull_requests.housekeeping.length}}
+            ## 🧹 Housekeeping
+            {{#pull_requests.housekeeping}}
+            * {{ title }} PR: #{{ number }}
+            {{/pull_requests.housekeeping}}
+            {{/pull_requests.housekeeping.length}}
+            <!-- Dependency updates -->
+            {{#pull_requests.dependencies.length}}
+            ## 📦 Dependency updates
+            {{#pull_requests.dependencies}}
+            * {{ title }} PR: #{{ number }}
+            {{/pull_requests.dependencies}}
+            {{/pull_requests.dependencies.length}}
+      - name: "Github Release"
+        uses: softprops/action-gh-release@91409e712cf565ce9eff10c87a8d1b11b81757ae #v1
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          tag_name: "${{ steps.vars.outputs.tag }}"
+          name: "${{ steps.vars.outputs.tag }}"
+          files: build/assets/*
+          body: ${{ steps.content.outputs.content }}
