@@ -1,0 +1,15 @@
+name: Get elevation for location with empty request body
+request:
+  url: /api/v1/lookup
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    locations: []
+response:
+  status: 200
+  headers:
+    Content-Type: application/json
+  body:
+    errors: false
+    results: []

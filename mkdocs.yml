@@ -1,0 +1,30 @@
+site_name: Raylevation
+plugins:
+  - search
+#  - markdownextradata
+#  - mkdocs_pymdownx_material_extras
+  - codeinclude:
+      title_mode: pymdownx.tabbed
+theme:
+  name: 'material'
+  palette:
+    primary: 'blue'
+    accent: 'teal'
+  font: false
+  logo: 'assets/logo.svg'
+  favicon: 'assets/logo-256.ico'
+repo_name: 'raylevation'
+repo_url: 'https://github.com/raynigon/raylevation'
+markdown_extensions:
+  - pymdownx.tabbed:
+      alternate_style: true 
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+nav:
+  - Home: index.md
+  - Contribution: contribution.md
+extra:
+  latest_version: 0.0.1

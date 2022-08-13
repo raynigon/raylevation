@@ -1,0 +1,108 @@
+name: CI - Main
+on:
+  push:
+    branches: [ ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build base image
+        run: |
+          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.4.3 .
+      - name: Gradle Command - clean
+        if: github.actor != 'dependabot[bot]'
+        uses: eskatos/gradle-command-action@v1.3.3
+        with:
+          arguments: clean
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+      - name: Gradle Daemon Stop
+        run: ./gradlew --stop
+      - name: Gradle Command - test
+        run: >
+          docker run --rm 
+          -w /app
+          -v $(pwd):/app 
+          -v ~/.gradle:/root/.gradle 
+          ghcr.io/raynigon/raylevation-gdal-base:3.4.3
+          ./gradlew clean test
+      - name: Codacy Publish
+        uses: codacy/codacy-coverage-reporter-action@master
+        if: github.actor != 'dependabot[bot]'
+        with:
+          project-token: ${{ secrets.CODACY_TOKEN }}
+
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Kotlin Linter
+        uses: eskatos/gradle-command-action@v1.3.2
+        with:
+          arguments: ktlintCheck
+      - name: Checkstyle Linter
+        uses: eskatos/gradle-command-action@v1.3.2
+        with:
+          arguments: checkstyleMain
+      - name: PMD Linter
+        uses: eskatos/gradle-command-action@v1.3.2
+        with:
+          arguments: pmdMain
+      - uses: jwgmeligmeyling/checkstyle-github-action@master
+        with:
+          path: '**/checkstyle/main.xml'
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+        with:
+          tool: spotbugs
+          project-token: ${{ secrets.CODACY_TOKEN }}
+          upload: true
+          max-allowed-issues: 2147483647
+
+  javadoc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Generate javadoc
+        uses: eskatos/gradle-command-action@v1.3.2
+        with:
+          arguments: globalJavadoc
+      - name: Upload javadoc
+        uses: sebastianpopp/ftp-action@releases/v2
+        if: github.ref == 'refs/heads/main' || contains(github.ref, 'refs/tags/')
+        with:
+          host: ${{ secrets.WEBSPACE_HOST }}
+          user: ${{ secrets.WEBSPACE_USER }}
+          password: ${{ secrets.WEBSPACE_PASSWORD }}
+          localDir: "build/javadoc/"
+          remoteDir: "javadoc/"
+
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - run: pip3 install -r requirements.txt
+      - run: mkdocs build -d build/site/
+      - name: Upload documentation
+        uses: sebastianpopp/ftp-action@releases/v2
+        if: github.ref == 'refs/heads/main' || contains(github.ref, 'refs/tags/')
+        with:
+          host: ${{ secrets.WEBSPACE_HOST }}
+          user: ${{ secrets.WEBSPACE_USER }}
+          password: ${{ secrets.WEBSPACE_PASSWORD }}
+          localDir: "build/site/"
+          remoteDir: "."

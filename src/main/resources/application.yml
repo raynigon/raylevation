@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: "raylevation-server"
+---
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+---
+# ECS Logging
+raynigon.logging.access:
+  exclude-endpoints:
+    - /actuator/healthcheck
+    - /actuator/prometheus
+---
+app.raylevation.db:
+  cache-tile-count: 10
+  path: "workspace/data/"
+---
+app.raylevation.srtm:
+  workspace: "workspace/srtm/"
+  url: "https://srtm.csi.cgiar.org/wp-content/uploads/files/250m/{{name}}_TIF.rar"
+  tiles:
+    - name: "SRTM_NE_250m"
+      splitX: 20
+      splitY: 10
+    - name: "SRTM_SE_250m"
+      splitX: 20
+      splitY: 10
+    - name: "SRTM_W_250m"
+      splitX: 20
+      splitY: 20
