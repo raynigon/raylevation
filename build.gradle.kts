@@ -82,7 +82,7 @@ dependencies {
     implementation("com.raynigon.spring-boot:ecs-logging-async:1.1.2")
 
     // Helpers
-    implementation("org.gdal:gdal:3.4.0")
+    implementation("org.gdal:gdal:3.5.0")
     implementation("com.github.davidmoten:rtree:0.10")
     implementation("com.github.davidmoten:geo:0.8.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
