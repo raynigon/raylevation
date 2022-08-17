@@ -23,7 +23,7 @@ jobs:
           VERSION_LINE=$(cat gradle.properties | grep "version=")
           CURRENT_VERSION=${VERSION_LINE//version=/}
           TAG_VERSION=v${CURRENT_VERSION//-SNAPSHOT/}
-          echo ::set-output name=version::$CURRENT_VERSION
+          echo ::set-output name=version::${CURRENT_VERSION//-SNAPSHOT/}
           echo ::set-output name=tag::$TAG_VERSION
       - name: "Prepare Git"
         run: |
