@@ -12,18 +12,26 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: "Setup GDAL"
+      - name: Build base image
         run: |
-          sudo add-apt-repository ppa:ubuntugis/ppa
-          sudo apt-get update
-          sudo apt-get install gdal-bin==3.4.3
+          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.4.3 .
       - name: Gradle Command - clean
         if: github.actor != 'dependabot[bot]'
         uses: eskatos/gradle-command-action@v1.3.3
         with:
-          arguments: clean test
+          arguments: clean
           wrapper-cache-enabled: true
           dependencies-cache-enabled: true
+      - name: Gradle Daemon Stop
+        run: ./gradlew --stop
+      - name: Gradle Command - test
+        run: >
+          docker run --rm 
+          -w /app
+          -v $(pwd):/app 
+          -v ~/.gradle:/root/.gradle 
+          ghcr.io/raynigon/raylevation-gdal-base:3.4.3
+          ./gradlew clean test
       - name: Codacy Publish
         uses: codacy/codacy-coverage-reporter-action@master
         if: github.actor != 'dependabot[bot]'
