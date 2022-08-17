@@ -18,6 +18,7 @@ jobs:
       - name: Gradle Command - test
         run: >
           docker run --rm 
+          -u 0
           -w /app
           -v $(pwd):/app 
           -v ~/.gradle:/root/.gradle 
