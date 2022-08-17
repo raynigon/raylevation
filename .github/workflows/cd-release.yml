@@ -52,6 +52,8 @@ jobs:
           mkdir -p build/assets/
           cp build/libs/*.jar build/assets/
           cp build/jib-image.tar build/assets/raylevation-server-${{ steps.vars.outputs.version }}-docker.tar
+          cp deployment/k8s/install-minimum.yaml build/assets/raylevation-${{ steps.vars.outputs.version }}-k8s-min.yaml
+          cp deployment/k8s/install-full.yaml build/assets/raylevation-${{ steps.vars.outputs.version }}-k8s-full.yaml
       - id: content
         name: Create Release Content
         uses: raynigon/release-documentation@main

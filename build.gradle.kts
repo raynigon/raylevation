@@ -193,6 +193,7 @@ jib {
     container {
         mainClass = "com.raynigon.raylevation.RaylevationApplicationKt"
         ports = listOf("8080")
+        user = "1000"
         environment = mapOf(
             "SPRING_MAIN_BANNER-MODE" to "off"
         )
@@ -215,7 +216,7 @@ jib {
 apply(from = "$rootDir/gradle/scripts/versionClass.gradle")
 apply(from = "$rootDir/gradle/scripts/javadoc.gradle")
 apply(from = "$rootDir/gradle/scripts/test.gradle")
-apply(from = "$rootDir/gradle/scripts/updateMkdocsConfig.gradle")
+apply(from = "$rootDir/gradle/scripts/external.gradle")
 apply(from = "$rootDir/gradle/scripts/release.gradle")
 apply(from = "$rootDir/gradle/scripts/publishing.gradle")
 apply(from = "$rootDir/gradle/scripts/setup.gradle")

@@ -8,8 +8,10 @@ pull_request_rules:
         - -conflict
         - label=dependencies
         - author=dependabot[bot]
-        - check-success=javadoc
-        - check-success=Codacy Static Code Analysis
+        - check-success=Build and Test
+        - check-success=Static Code Analysis
+        - check-success=Code Documentation
+        - check-success=User Documentation
     actions:
       merge:
         method: merge
