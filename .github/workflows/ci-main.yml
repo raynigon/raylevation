@@ -97,8 +97,9 @@ jobs:
         run: |
           mkdir -p data
           docker images
-          docker run --rm -d -p 8080:8080 -v $(pwd)/data/:/data raynigon/raylevation:unknown_commit
+          docker run --rm -d -p 8080:8080 -v $(pwd)/data/:/workspace raynigon/raylevation:unknown_commit
           curl -v --retry 30 --retry-connrefused http://localhost:8080/actuator/healthcheck
+        timeout-minutes: 5
 
   dokka:
     name: "Code Documentation"
