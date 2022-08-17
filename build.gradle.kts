@@ -215,7 +215,7 @@ jib {
 apply(from = "$rootDir/gradle/scripts/versionClass.gradle")
 apply(from = "$rootDir/gradle/scripts/javadoc.gradle")
 apply(from = "$rootDir/gradle/scripts/test.gradle")
-apply(from = "$rootDir/gradle/scripts/updateMkdocsConfig.gradle")
+apply(from = "$rootDir/gradle/scripts/external.gradle")
 apply(from = "$rootDir/gradle/scripts/release.gradle")
 apply(from = "$rootDir/gradle/scripts/publishing.gradle")
 apply(from = "$rootDir/gradle/scripts/setup.gradle")

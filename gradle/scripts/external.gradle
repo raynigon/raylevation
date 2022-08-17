@@ -1,0 +1,19 @@
+
+task updateMkdocsConfig() {
+    group = "external"
+    doFirst {
+        def cfg = project.file(project.file('mkdocs.yml'))
+        cfg.text = cfg.text.replaceAll(/(?m)latest_version:.*/, "latest_version: ${project.version}")
+    }
+}
+
+task updateK8sYaml() {
+    group = "external"
+    doFirst {
+        def install = project.file(project.file('deployment/k8s/install.yaml'))
+        install.text = install.text.replaceAll(/ghcr.io\/raynigon\/raylevation:.*/, "ghcr.io/raynigon/raylevation:v${project.version}")
+        install.text = install.text.replaceAll(/app.kubernetes.io\/version: .*/, "app.kubernetes.io/version: ${project.version}")
+        def monitoring = project.file(project.file('deployment/k8s/monitoring.yaml'))
+        monitoring.text = monitoring.text.replaceAll(/app.kubernetes.io\/version: .*/, "app.kubernetes.io/version: ${project.version}")
+    }
+}

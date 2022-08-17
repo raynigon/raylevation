@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: raylevation-monitor
+  labels:
+    app.kubernetes.io/name: raylevation-monitor
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/part-of: raylevation
+    app.kubernetes.io/component: server
+spec:
+  endpoints:
+    - path: /actuator/prometheus
+      port: http
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: raylevation
+      app.kubernetes.io/version: 0.0.1
+      app.kubernetes.io/part-of: raylevation
+      app.kubernetes.io/component: server
