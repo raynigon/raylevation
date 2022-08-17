@@ -1,6 +1,7 @@
 #!/bin/bash
-mkdir -p data
-chown 1000 data/
+mkdir -p data/tiles
+chmod -R 777 data/
+chown -R 1000 data/
 echo "Available Images:"
 docker images | grep "raylevation"
 echo "Start Container:"
