@@ -14,6 +14,7 @@ jobs:
           java-version: 11
       - name: Build base image
         run: |
+          .github/scripts/setup-gdal.sh
           docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.4.3 .
       - name: Gradle Command - test
         run: >
