@@ -13,19 +13,13 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Build base image
-        run: |
-          .github/scripts/setup-gdal.sh
-          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.4.3 .
       - name: Gradle Command - test
-        run: >
-          docker run --rm 
-          -u 0
-          -w /app
-          -v $(pwd):/app 
-          -v ~/.gradle:/root/.gradle 
-          ghcr.io/raynigon/raylevation-gdal-base:3.4.3
-          ./gradlew clean test
+        if: github.actor != 'dependabot[bot]'
+        uses: eskatos/gradle-command-action@v1.3.3
+        with:
+          arguments: clean test
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
       - name: Codacy Publish
         uses: codacy/codacy-coverage-reporter-action@master
         if: github.actor != 'dependabot[bot]'
