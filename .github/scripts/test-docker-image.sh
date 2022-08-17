@@ -5,7 +5,7 @@ sudo chown -R 1000 data/
 echo "Available Images:"
 docker images | grep "raylevation"
 echo "Start Container:"
-docker run --name raylevation-docker-test -d --user 1000 -p 8080:8080 -v $(pwd)/data/:/workspace/data/ raynigon/raylevation:latest
+docker run --name raylevation-docker-test -d --user 1000 -p 8080:8080 -v $(pwd)/data/:/app/workspace/data/ raynigon/raylevation:latest
 sleep 10
 docker logs raylevation-docker-test
 echo "Start connection attempts..."
