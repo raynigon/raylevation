@@ -193,6 +193,7 @@ jib {
     container {
         mainClass = "com.raynigon.raylevation.RaylevationApplicationKt"
         ports = listOf("8080")
+        user = "1000"
         environment = mapOf(
             "SPRING_MAIN_BANNER-MODE" to "off"
         )
