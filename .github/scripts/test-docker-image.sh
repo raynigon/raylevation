@@ -1,5 +1,6 @@
 #!/bin/bash
 mkdir -p data
+chown 1000 data/
 echo "Available Images:"
 docker images | grep "raylevation"
 echo "Start Container:"
