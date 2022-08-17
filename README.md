@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/raynigon/raylevation/actions/workflows/ci-main.yml/badge.svg)](https://github.com/raynigon/raylevation/actions/workflows/ci-main.yml)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a139598db8ef45a99c179664dc6a8463)](https://app.codacy.com/gh/raynigon/raylevation/dashboard)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/a139598db8ef45a99c179664dc6a8463)](https://app.codacy.com/gh/raynigon/raylevationdashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/a139598db8ef45a99c179664dc6a8463)](https://app.codacy.com/gh/raynigon/raylevation/dashboard)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.raynigon.raylevation/raylevation-server/badge.svg)](https://search.maven.org/search?q=com.raynigon.raylevation)
 
 <a href="https://raylevation.raynigon.com/" target="_blank">
