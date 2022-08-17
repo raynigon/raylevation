@@ -5,7 +5,7 @@ metadata:
   namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-server
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
 spec:
@@ -24,13 +24,13 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: raylevation-server
-        app.kubernetes.io/version: 0.0.1
+        app.kubernetes.io/version: 0.0.2
         app.kubernetes.io/part-of: raylevation
         app.kubernetes.io/component: server
     spec:
       initContainers:
         - name: raylevation-download
-          image: ghcr.io/raynigon/raylevation:v0.0.1
+          image: ghcr.io/raynigon/raylevation:v0.0.2
           imagePullPolicy: Always
           env:
             - name: RAYLEVATION_CLI_CMD
@@ -60,7 +60,7 @@ spec:
               name: raylevation-srtm
       containers:
         - name: raylevation-server
-          image: ghcr.io/raynigon/raylevation:v0.0.1
+          image: ghcr.io/raynigon/raylevation:v0.0.2
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -130,7 +130,7 @@ metadata:
   namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-pvc
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
 spec:
@@ -147,13 +147,13 @@ metadata:
   namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
 spec:
   selector:
     app.kubernetes.io/name: raylevation-server
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
   ports:
