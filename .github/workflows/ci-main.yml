@@ -86,7 +86,7 @@ jobs:
           registry: "ghcr.io"
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Gradle Command - clean
+      - name: Gradle Command - jibDockerBuild
         if: github.actor != 'dependabot[bot]'
         uses: eskatos/gradle-command-action@v1.3.3
         with:
@@ -96,7 +96,8 @@ jobs:
       - name: Test Docker Image
         run: |
           mkdir -p data
-          docker run --rm -d -p 8080:8080 -v $(pwd)/data/:/data raylevation/raylevation
+          docker images
+          docker run --rm -d -p 8080:8080 -v $(pwd)/data/:/data raynigon/raylevation:unknown_commit
           curl -v --retry 30 --retry-connrefused http://localhost:8080/actuator/healthcheck
 
   dokka:
