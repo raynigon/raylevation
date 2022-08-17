@@ -15,15 +15,6 @@ jobs:
       - name: Build base image
         run: |
           docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.4.3 .
-      - name: Gradle Command - clean
-        if: github.actor != 'dependabot[bot]'
-        uses: eskatos/gradle-command-action@v1.3.3
-        with:
-          arguments: clean
-          wrapper-cache-enabled: true
-          dependencies-cache-enabled: true
-      - name: Gradle Daemon Stop
-        run: ./gradlew --stop
       - name: Gradle Command - test
         run: >
           docker run --rm 
