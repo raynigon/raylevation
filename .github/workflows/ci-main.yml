@@ -70,6 +70,7 @@ jobs:
           max-allowed-issues: 2147483647
 
   dokka:
+    name: "Code Documentation"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -91,6 +92,7 @@ jobs:
           remoteDir: "dokka/"
 
   documentation:
+    name: "User Documentation"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -110,14 +112,14 @@ jobs:
           remoteDir: "."
 
   deployment_linting:
-    name: Deployment Linting
+    name: "Deployment Linting"
     runs-on: ubuntu-latest
     concurrency:
       group: "linting-k8s-${{ github.ref }}"
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v2
-      - name: Python Lint
+      - name: "Register Matchers"
         run: echo "::add-matcher::.github/matchers/kube-linter.json"
       - name: Scan yamls
         id: kube-lint-scan

@@ -1,12 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: raylevation-server
+  namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-server
     app.kubernetes.io/version: 0.0.1
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
-  name: raylevation-server
 spec:
   progressDeadlineSeconds: 300
   replicas: 2
@@ -101,6 +102,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: raylevation-pvc
+  namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-pvc
     app.kubernetes.io/version: 0.0.1
@@ -117,6 +119,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: raylevation
+  namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation
     app.kubernetes.io/version: 0.0.1

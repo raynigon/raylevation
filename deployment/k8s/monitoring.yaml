@@ -2,6 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: raylevation-monitor
+  namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-monitor
     app.kubernetes.io/version: 0.0.1
