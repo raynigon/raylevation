@@ -3,7 +3,11 @@ mkdir -p data
 echo "Available Images:"
 docker images | grep "raylevation"
 echo "Start Container:"
-docker run --name raylevation-docker-test --rm -d -p 8080:8080 -v $(pwd)/data/:/workspace raynigon/raylevation:unknown_commit
+docker run --name raylevation-docker-test -d -p 8080:8080 -v $(pwd)/data/:/workspace raynigon/raylevation:latest
+sleep 5
+echo "Current Logs:"
+docker logs raylevation-docker-test
+echo "Start connection attempts..."
 attempt=0
 while [ $attempt -le 59 ]; do
   attempt=$(($attempt + 1))
@@ -19,3 +23,5 @@ while [ $attempt -le 59 ]; do
 done
 echo "Stop Container..."
 docker stop raylevation-docker-test
+echo "Remove Container..."
+docker rm raylevation-docker-test
