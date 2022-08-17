@@ -5,7 +5,7 @@ metadata:
   namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-server
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
 spec:
@@ -24,7 +24,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: raylevation-server
-        app.kubernetes.io/version: 0.0.1
+        app.kubernetes.io/version: 0.0.2
         app.kubernetes.io/part-of: raylevation
         app.kubernetes.io/component: server
     spec:
@@ -130,7 +130,7 @@ metadata:
   namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-pvc
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
 spec:
@@ -147,13 +147,13 @@ metadata:
   namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
 spec:
   selector:
     app.kubernetes.io/name: raylevation-server
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
   ports:
@@ -171,7 +171,7 @@ metadata:
   namespace: raylevation
   labels:
     app.kubernetes.io/name: raylevation-monitor
-    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/version: 0.0.2
     app.kubernetes.io/part-of: raylevation
     app.kubernetes.io/component: server
 spec:
@@ -181,6 +181,6 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: raylevation
-      app.kubernetes.io/version: 0.0.1
+      app.kubernetes.io/version: 0.0.2
       app.kubernetes.io/part-of: raylevation
       app.kubernetes.io/component: server
