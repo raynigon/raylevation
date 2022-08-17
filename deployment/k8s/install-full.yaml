@@ -58,6 +58,8 @@ spec:
               name: raylevation-pvc
             - mountPath: /srtm/
               name: raylevation-srtm
+            - mountPath: /tmp/
+              name: raylevation-tmp
       containers:
         - name: raylevation-server
           image: ghcr.io/raynigon/raylevation:v0.0.1
@@ -86,6 +88,8 @@ spec:
           volumeMounts:
             - mountPath: /data/
               name: raylevation-pvc
+            - mountPath: /tmp/
+              name: raylevation-tmp
           readinessProbe:
             httpGet:
               path: /actuator/healthcheck
@@ -112,6 +116,8 @@ spec:
             claimName: raylevation-pvc
         - name: raylevation-srtm
           emptyDir: {}
+        - name: raylevation-tmp
+          emptyDir: { }
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
