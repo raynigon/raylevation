@@ -9,8 +9,8 @@ echo "Current Logs:"
 docker logs raylevation-docker-test
 echo "Start connection attempts..."
 attempt=0
-while [ $attempt -le 59 ]; do
-  attempt=$(($attempt + 1))
+while [ $attempt -le 30 ]; do
+  attempt=$((attempt + 1))
   echo "Waiting for server to be up (attempt: $attempt)..."
   curl -s --retry 30 --retry-connrefused http://localhost:8080/actuator/healthcheck
   result=$?
