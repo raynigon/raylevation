@@ -83,7 +83,7 @@ jobs:
           dependencies-cache-enabled: true
       - name: Test Docker Image
         run: ".github/scripts/test-docker-image.sh"
-        timeout-minutes: 5
+        timeout-minutes: 2
 
   dokka:
     name: "Code Documentation"
