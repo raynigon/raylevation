@@ -3,11 +3,14 @@ mkdir -p build/gdal/output
 cd build/gdal/
 docker run --rm -v $(pwd)/output:/output osgeo/gdal:ubuntu-full-3.4.3 cp -R /usr/ /output/usr/
 
-apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+yes | sudo cp -rf /output/usr/ /usr/
+
+sudo apt-get update
+export DEBIAN_FRONTEND=noninteractive
+sudo apt-get install -y \
         libsqlite3-0 libtiff5 libcurl4 \
-        wget curl unzip ca-certificates \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        wget curl unzip ca-certificates
+sudo apt-get install -y \
         libopenjp2-7 libcairo2 python3-numpy \
         libpng16-16 libjpeg-turbo8 libgif7 liblzma5 libgeos3.10.2 libgeos-c1v5 \
         libxml2 libexpat1 \
@@ -20,13 +23,7 @@ apt-get update \
         libarmadillo10 libpython3.10 libopenexr25 libheif1 \
         libdeflate0 libblosc1 liblz4-1 \
         libbrotli1 \
-        python-is-python3 \
-    && ln -s /usr/lib/ogdi/libvrf.so /usr/lib \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y -V ca-certificates lsb-release wget \
-    && wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb \
-    && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y -V libarrow800 libparquet800 libarrow-dataset800 \
-    && rm -rf /var/lib/apt/lists/*
+        python-is-python3
+sudo ln -s /usr/lib/ogdi/libvrf.so /usr/lib
+sudo apt-get install -y -V ca-certificates lsb-release wget
 
-yes | sudo cp -rf /output/usr/ /usr/
