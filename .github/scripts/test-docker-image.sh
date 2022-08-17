@@ -4,7 +4,7 @@ echo "Available Images:"
 docker images | grep "raylevation"
 echo "Start Container:"
 docker run --name raylevation-docker-test -d -p 8080:8080 -v $(pwd)/data/:/workspace raynigon/raylevation:latest
-sleep 5
+sleep 10
 echo "Current Logs:"
 docker logs raylevation-docker-test
 echo "Start connection attempts..."
