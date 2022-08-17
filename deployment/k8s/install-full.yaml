@@ -117,7 +117,7 @@ spec:
         - name: raylevation-srtm
           emptyDir: {}
         - name: raylevation-tmp
-          emptyDir: { }
+          emptyDir: {}
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
