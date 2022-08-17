@@ -1,0 +1,16 @@
+{
+  "problemMatcher": [
+    {
+      "severity": "warning",
+      "pattern": [
+        {
+          "regexp": "^([^:]+): \\([^)]*\\) ([^(]*) \\(check: ([^,)]*)(?:(?:[^)]*)|(?:,))\\)$",
+          "file": 1,
+          "message": 2,
+          "code": 3
+        }
+      ],
+      "owner": "kube-linter"
+    }
+  ]
+}

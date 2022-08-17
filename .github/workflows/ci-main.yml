@@ -5,6 +5,7 @@ on:
 
 jobs:
   build:
+    name: "Build and Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -37,7 +38,8 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_TOKEN }}
 
-  linter:
+  static_analysis:
+    name: "Static Code Analysis"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -106,3 +108,20 @@ jobs:
           password: ${{ secrets.WEBSPACE_PASSWORD }}
           localDir: "build/site/"
           remoteDir: "."
+
+  deployment_linting:
+    name: Deployment Linting
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "linting-k8s-${{ github.ref }}"
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Python Lint
+        run: echo "::add-matcher::.github/matchers/kube-linter.json"
+      - name: Scan yamls
+        id: kube-lint-scan
+        uses: stackrox/kube-linter-action@v1
+        with:
+          directory: deployment/k8s/
+          # config: .kube-linter/config.yaml
