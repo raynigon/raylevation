@@ -10,10 +10,11 @@ task updateMkdocsConfig() {
 task updateK8sYaml() {
     group = "external"
     doFirst {
-        def install = project.file(project.file('deployment/k8s/install.yaml'))
+        def install = project.file(project.file('deployment/k8s/install-minimum.yaml'))
         install.text = install.text.replaceAll(/ghcr.io\/raynigon\/raylevation:.*/, "ghcr.io/raynigon/raylevation:v${project.version}")
         install.text = install.text.replaceAll(/app.kubernetes.io\/version: .*/, "app.kubernetes.io/version: ${project.version}")
-        def monitoring = project.file(project.file('deployment/k8s/monitoring.yaml'))
+        def monitoring = project.file(project.file('deployment/k8s/install-full.yaml'))
+        install.text = install.text.replaceAll(/ghcr.io\/raynigon\/raylevation:.*/, "ghcr.io/raynigon/raylevation:v${project.version}")
         monitoring.text = monitoring.text.replaceAll(/app.kubernetes.io\/version: .*/, "app.kubernetes.io/version: ${project.version}")
     }
 }

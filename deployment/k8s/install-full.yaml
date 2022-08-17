@@ -1,0 +1,186 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: raylevation-server
+  namespace: raylevation
+  labels:
+    app.kubernetes.io/name: raylevation-server
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/part-of: raylevation
+    app.kubernetes.io/component: server
+spec:
+  progressDeadlineSeconds: 300
+  replicas: 2
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: raylevation-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: raylevation-server
+        app.kubernetes.io/version: 0.0.1
+        app.kubernetes.io/part-of: raylevation
+        app.kubernetes.io/component: server
+    spec:
+      initContainers:
+        - name: raylevation-download
+          image: ghcr.io/raynigon/raylevation:v0.0.1
+          imagePullPolicy: Always
+          env:
+            - name: RAYLEVATION_CLI_CMD
+              value: "update-srtm"
+            - name: APP_RAYLEVATION_DB_PATH
+              value: "/data/"
+            - name: APP_RAYLEVATION_SRTM_WORKSPACE
+              value: "/srtm/"
+            - name: APP_RAYLEVATION_SRTM_SAVE_DISK_SPACE
+              value: "true"
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 4096Mi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+          securityContext:
+            procMount: Default
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - mountPath: /data/
+              name: raylevation-pvc
+            - mountPath: /srtm/
+              name: raylevation-srtm
+      containers:
+        - name: raylevation-server
+          image: ghcr.io/raynigon/raylevation:v0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          env:
+            - name: APP_RAYLEVATION_DB_PATH
+              value: "/data/"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2048Mi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+          securityContext:
+            procMount: Default
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /data/
+              name: raylevation-pvc
+          readinessProbe:
+            httpGet:
+              path: /actuator/healthcheck
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 30
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /actuator/healthcheck
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 10
+      volumes:
+        - name: raylevation-pvc
+          persistentVolumeClaim:
+            claimName: raylevation-pvc
+        - name: raylevation-srtm
+          emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app.kubernetes.io/name"
+                    operator: In
+                    values:
+                      - raylevation-server
+              topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: raylevation-pvc
+  namespace: raylevation
+  labels:
+    app.kubernetes.io/name: raylevation-pvc
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/part-of: raylevation
+    app.kubernetes.io/component: server
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 25Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: raylevation
+  namespace: raylevation
+  labels:
+    app.kubernetes.io/name: raylevation
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/part-of: raylevation
+    app.kubernetes.io/component: server
+spec:
+  selector:
+    app.kubernetes.io/name: raylevation-server
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/part-of: raylevation
+    app.kubernetes.io/component: server
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: raylevation-monitor
+  namespace: raylevation
+  labels:
+    app.kubernetes.io/name: raylevation-monitor
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/part-of: raylevation
+    app.kubernetes.io/component: server
+spec:
+  endpoints:
+    - path: /actuator/prometheus
+      port: http
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: raylevation
+      app.kubernetes.io/version: 0.0.1
+      app.kubernetes.io/part-of: raylevation
+      app.kubernetes.io/component: server
