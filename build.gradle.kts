@@ -21,7 +21,7 @@ plugins {
     id("org.owasp.dependencycheck") version "7.1.2"
 
     // Docker Container Build
-    id("com.google.cloud.tools.jib") version "3.2.1"
+    id("com.google.cloud.tools.jib") version "3.3.0"
 
     // Linter
     id("pmd")
