@@ -7,7 +7,7 @@ release {
     buildTasks = ['jib', 'jibBuildTar', 'assemble', 'javadocJar', 'publish']
 
     git {
-        requireBranch = "release"
+        requireBranch.set("release")
     }
 }
 
