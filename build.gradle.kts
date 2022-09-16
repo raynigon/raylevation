@@ -18,7 +18,7 @@ plugins {
     id("net.researchgate.release") version "3.0.2"
 
     // Dependency Check
-    id("org.owasp.dependencycheck") version "7.1.2"
+    id("org.owasp.dependencycheck") version "7.2.0"
 
     // Docker Container Build
     id("com.google.cloud.tools.jib") version "3.3.0"
