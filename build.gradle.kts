@@ -77,7 +77,7 @@ dependencies {
     implementation("com.raynigon.unit-api:unit-api-kotlin:2.0.1")
 
     // Logging
-    implementation("com.raynigon.spring-boot:ecs-logging-app:1.1.3")
+    implementation("com.raynigon.spring-boot:ecs-logging-app:1.1.4")
     implementation("com.raynigon.spring-boot:ecs-logging-access:1.1.3")
     implementation("com.raynigon.spring-boot:ecs-logging-async:1.1.3")
 
