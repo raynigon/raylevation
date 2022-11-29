@@ -30,7 +30,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
 
     // Kotlin
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.21"
     kotlin("plugin.jpa") version "1.7.22"
     kotlin("kapt") version "1.7.21"
