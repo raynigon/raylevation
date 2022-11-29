@@ -32,7 +32,7 @@ plugins {
     // Kotlin
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.spring") version "1.7.21"
-    kotlin("plugin.jpa") version "1.7.21"
+    kotlin("plugin.jpa") version "1.7.22"
     kotlin("kapt") version "1.7.21"
 
     // Dokka
