@@ -18,7 +18,7 @@ plugins {
     id("net.researchgate.release") version "3.0.2"
 
     // Dependency Check
-    id("org.owasp.dependencycheck") version "7.4.0"
+    id("org.owasp.dependencycheck") version "7.4.1"
 
     // Docker Container Build
     id("com.google.cloud.tools.jib") version "3.3.1"
@@ -74,7 +74,7 @@ dependencies {
     // unit-api
     implementation("com.raynigon.unit-api:spring-boot-jackson-starter:2.0.1")
     implementation("com.raynigon.unit-api:spring-boot-jpa-starter:2.0.1")
-    implementation("com.raynigon.unit-api:unit-api-kotlin:2.0.1")
+    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.0")
 
     // Logging
     implementation("com.raynigon.spring-boot:ecs-logging-app:1.1.4")
