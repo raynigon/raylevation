@@ -10,7 +10,7 @@ plugins {
     id("signing")
     id("maven-publish")
 
-    id("org.springframework.boot") version "2.7.5"
+    id("org.springframework.boot") version "3.0.0"
     id("org.springframework.cloud.contract") version "3.1.5"
     id("io.spring.dependency-management") version "1.1.0"
 
@@ -74,11 +74,11 @@ dependencies {
     // unit-api
     implementation("com.raynigon.unit-api:spring-boot-jackson-starter:2.0.1")
     implementation("com.raynigon.unit-api:spring-boot-jpa-starter:2.0.1")
-    implementation("com.raynigon.unit-api:unit-api-kotlin:2.0.1")
+    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.0")
 
     // Logging
-    implementation("com.raynigon.spring-boot:ecs-logging-app:1.1.4")
-    implementation("com.raynigon.spring-boot:ecs-logging-access:1.1.4")
+    implementation("com.raynigon.spring-boot:ecs-logging-app:2.0.0")
+    implementation("com.raynigon.spring-boot:ecs-logging-access:2.0.0")
     implementation("com.raynigon.spring-boot:ecs-logging-async:2.0.0")
 
     // Helpers
