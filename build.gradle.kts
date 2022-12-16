@@ -109,7 +109,7 @@ dependencies {
 
     // Documentation
     testImplementation("org.springdoc:springdoc-openapi-ui:1.6.13")
-    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:2.0.1")
+    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.0")
 }
 
 dependencyManagement {
