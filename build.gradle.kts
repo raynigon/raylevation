@@ -72,7 +72,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-spring-boot2")
 
     // unit-api
-    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:2.0.1")
+    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:3.0.1")
     implementation("com.raynigon.unit-api:spring-boot-jpa-starter:2.0.1")
     implementation("com.raynigon.unit-api:unit-api-kotlin:2.0.1")
 
