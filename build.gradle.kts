@@ -11,7 +11,7 @@ plugins {
     id("maven-publish")
 
     id("org.springframework.boot") version "2.7.5"
-    id("org.springframework.cloud.contract") version "3.1.5"
+    id("org.springframework.cloud.contract") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.0"
 
     // Auto Release
