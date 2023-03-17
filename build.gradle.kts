@@ -41,7 +41,8 @@ plugins {
 }
 
 group = "com.raynigon.raylevation"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
 
 configurations {
     compileOnly {
@@ -159,7 +160,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
     withType<JacocoReport> {
@@ -199,7 +200,10 @@ jib {
         )
         labels.put("org.opencontainers.image.created", OffsetDateTime.now().toString())
         labels.put("org.opencontainers.image.authors", "Raynigon <opensource@raynigon.de>")
-        labels.put("org.opencontainers.image.url", "https://github.com/raynigon/raylevation/releases/tag/v${project.version}")
+        labels.put(
+            "org.opencontainers.image.url",
+            "https://github.com/raynigon/raylevation/releases/tag/v${project.version}"
+        )
         labels.put("org.opencontainers.image.documentation", "https://raylevation.raynigon.com/")
         labels.put("org.opencontainers.image.source", "https://github.com/raynigon/raylevation")
         labels.put("org.opencontainers.image.version", project.version.toString())
