@@ -104,7 +104,7 @@ dependencies {
     testImplementation("org.testcontainers:spock")
 
     // Mockk
-    testImplementation("io.mockk:mockk:1.13.3")
+    testImplementation("io.mockk:mockk:1.13.4")
     testImplementation("io.github.hakky54:logcaptor:2.8.0")
 
     // Documentation
