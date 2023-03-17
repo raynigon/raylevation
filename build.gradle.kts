@@ -37,7 +37,7 @@ plugins {
 
     // Dokka
     id("org.jetbrains.dokka") version "1.7.20"
-    id("com.dorongold.task-tree") version "2.1.0"
+    id("com.dorongold.task-tree") version "2.1.1"
 }
 
 group = "com.raynigon.raylevation"
