@@ -181,8 +181,9 @@ class RaylevationDB(
             .toSet()
 
         // No change in cache, exit early
-        if (tilesInCache == tilesToCache)
+        if (tilesInCache == tilesToCache) {
             return
+        }
 
         // Update cache for tiles
         for (tile in tiles) {
@@ -209,8 +210,10 @@ class RaylevationDB(
         val bounds = tile.bounds.roundOff()
         val name = String.format(
             "%+2.2f_%+2.2f_%+2.2f_%+2.2f",
-            bounds.yMax, bounds.xMin,
-            bounds.yMin, bounds.xMax,
+            bounds.yMax,
+            bounds.xMin,
+            bounds.yMin,
+            bounds.xMax
         )
         // Copy GDAL Tile to the database directory
         val tilePath = tilesFolder.resolve("$name$GEOTIFF_FILE_SUFFIX")
@@ -254,8 +257,9 @@ class RaylevationDB(
 
     @Synchronized
     private fun addTile(tile: IRaylevationTile) {
-        if (tiles.contains(tile))
+        if (tiles.contains(tile)) {
             throw IllegalArgumentException("Tile $tile already exists")
+        }
         // Create new index, because the index is immutable, therefore we need to create a new one on every change
         val newTiles = tiles.toMutableSet()
         val newIndex = index.add(tile, tile.toRectangle())

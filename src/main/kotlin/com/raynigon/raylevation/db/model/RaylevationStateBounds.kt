@@ -12,7 +12,7 @@ data class RaylevationStateBounds(
     val lon0: Double,
     val lat0: Double,
     val lon1: Double,
-    val lat1: Double,
+    val lat1: Double
 ) {
 
     constructor(bounds: TileBounds) : this(bounds.xMin, bounds.yMax, bounds.xMax, bounds.yMin)
@@ -24,7 +24,7 @@ data class RaylevationStateBounds(
     fun toTileBounds(): TileBounds {
         return TileBounds(
             GeoPoint(lat0, max(lon0, -180.0)),
-            GeoPoint(lat1, min(lon1, 180.0)),
+            GeoPoint(lat1, min(lon1, 180.0))
         )
     }
 }

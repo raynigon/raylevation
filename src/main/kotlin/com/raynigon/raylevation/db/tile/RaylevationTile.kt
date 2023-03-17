@@ -71,7 +71,7 @@ class RaylevationTile(
         "latitude",
         bounds.center.latitude.toString(),
         "longitude",
-        bounds.center.longitude.toString(),
+        bounds.center.longitude.toString()
     )
     private val metricCached = registry.gauge(
         "app.raylevation.db.tile.cached",
@@ -87,6 +87,7 @@ class RaylevationTile(
 
     override var cache: Boolean
         get() = tileCache != null
+
         @Synchronized
         set(value) {
             if (value && tileCache == null) {
@@ -100,8 +101,9 @@ class RaylevationTile(
         }
 
     override fun lookupElevation(point: GeoPoint): Quantity<Length> {
-        if (!bounds.contains(point))
+        if (!bounds.contains(point)) {
             throw LookupOutOfBoundsException(point, bounds)
+        }
         val result = (tileCache ?: GDALTile(path))
             .lookupElevation(point)
         incrementCounter()

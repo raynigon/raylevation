@@ -27,7 +27,7 @@ data class TileBounds(
         upperLeft.latitude,
         upperLeft.longitude,
         lowerRight.latitude,
-        lowerRight.longitude,
+        lowerRight.longitude
     )
 
     val center: GeoPoint by lazy {
