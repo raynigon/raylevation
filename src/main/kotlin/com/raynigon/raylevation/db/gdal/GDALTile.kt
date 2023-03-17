@@ -45,11 +45,13 @@ class GDALTile(val path: Path) {
      * Logic transferred from https://stackoverflow.com/questions/13439357/extract-point-from-raster-in-gdal
      */
     init {
-        if (dataset.GetRasterCount() != 1)
+        if (dataset.GetRasterCount() != 1) {
             throw IncompatibleTileException(path, "has too many Raster Bands", dataset.GetRasterCount(), 1)
+        }
         val bandDataType = dataset.GetRasterBand(ELEVATION_BAND).dataType
-        if (bandDataType != GDT_Int16)
+        if (bandDataType != GDT_Int16) {
             throw IncompatibleTileException(path, "has an incompatible data type on Band 1", bandDataType, GDT_Int16)
+        }
 
         val spatialReferenceRaster = SpatialReference(dataset.GetProjection())
         val spatialReference = SpatialReference()
@@ -129,8 +131,9 @@ class GDALTile(val path: Path) {
         val elevation = raster[ylin][xpix]
 
         // if no data exists we know the point is on sea level
-        if (elevation == noDataValue)
+        if (elevation == noDataValue) {
             return SEA_LEVEL
+        }
         return Metre(elevation)
     }
 
@@ -164,7 +167,8 @@ class GDALTile(val path: Path) {
     private fun createTranslateOptions(bounds: TileBounds) = TranslateOptions(
         Vector<Any>(
             listOf(
-                "-of", "GTiff",
+                "-of",
+                "GTiff",
                 "-projWin",
                 bounds.xMin.toString(),
                 bounds.yMax.toString(),

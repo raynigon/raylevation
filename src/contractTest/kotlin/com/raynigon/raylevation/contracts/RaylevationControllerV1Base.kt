@@ -20,13 +20,13 @@ abstract class RaylevationControllerV1Base : AbstractStandaloneMvcTest<Raylevati
         every { service.lookup(match { it.size == 3 }) } returns listOf(
             LookupResult(GeoPoint(10.0, 10.0), Metre(515)),
             LookupResult(GeoPoint(20.0, 20.0), Metre(545)),
-            LookupResult(GeoPoint(41.161758, -8.583933), Metre(117)),
+            LookupResult(GeoPoint(41.161758, -8.583933), Metre(117))
         )
         every { service.lookup(match { it.size == 4 }) } returns listOf(
             LookupResult(GeoPoint(10.0, 10.0), Metre(515)),
             LookupResult(GeoPoint(20.0, 20.0), Metre(545)),
             LookupResult(GeoPoint(41.161758, -8.583933), Metre(117)),
-            LookupResult(GeoPoint(85.0, 10.1), Metre(0), "Missing elevation data for (85.0,10.1)"),
+            LookupResult(GeoPoint(85.0, 10.1), Metre(0), "Missing elevation data for (85.0,10.1)")
         )
     }
 
