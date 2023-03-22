@@ -105,7 +105,7 @@ dependencies {
 
     // Mockk
     testImplementation("io.mockk:mockk:1.13.4")
-    testImplementation("io.github.hakky54:logcaptor:2.8.0")
+    testImplementation("io.github.hakky54:logcaptor:2.9.0")
 
     // Documentation
     testImplementation("org.springdoc:springdoc-openapi-ui:1.6.15")
