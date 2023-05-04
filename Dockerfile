@@ -1,4 +1,4 @@
-FROM osgeo/gdal:ubuntu-full-3.6.4
+FROM osgeo/gdal:ubuntu-full-3.6.3
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

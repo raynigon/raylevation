@@ -7,7 +7,7 @@ jobs:
   build:
     name: "Build and Test"
     runs-on: ubuntu-latest
-    container: osgeo/gdal:ubuntu-full-3.6.4
+    container: osgeo/gdal:ubuntu-full-3.6.3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
