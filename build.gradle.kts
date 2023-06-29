@@ -91,7 +91,7 @@ dependencies {
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
 
     // Spock
-    testImplementation("org.codehaus.groovy:groovy-all:3.0.17")
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.18")
     testImplementation("org.spockframework:spock-core:2.1-groovy-3.0")
     testImplementation("org.spockframework:spock-spring:2.1-groovy-3.0")
 
