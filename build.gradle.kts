@@ -12,7 +12,7 @@ plugins {
 
     id("org.springframework.boot") version "2.7.5"
     id("org.springframework.cloud.contract") version "4.0.4"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("io.spring.dependency-management") version "1.1.3"
 
     // Auto Release
     id("net.researchgate.release") version "3.0.2"
