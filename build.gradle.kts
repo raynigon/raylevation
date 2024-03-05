@@ -79,7 +79,7 @@ dependencies {
     // Logging
     implementation("com.raynigon.spring-boot:ecs-logging-app:1.1.4")
     implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.4")
-    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.4")
+    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.6")
 
     // Helpers
     implementation("org.gdal:gdal:3.4.0")
