@@ -74,7 +74,7 @@ dependencies {
     // unit-api
     implementation("com.raynigon.unit-api:spring-boot-jackson-starter:3.0.8")
     implementation("com.raynigon.unit-api:spring-boot-jpa-starter:2.0.1")
-    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.5")
+    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.8")
 
     // Logging
     implementation("com.raynigon.spring-boot:ecs-logging-app:1.1.4")
