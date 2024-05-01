@@ -31,7 +31,7 @@ plugins {
 
     // Kotlin
     kotlin("jvm") version "1.9.10"
-    kotlin("plugin.spring") version "1.9.10"
+    kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.20"
     kotlin("kapt") version "1.9.22"
 
