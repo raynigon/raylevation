@@ -1,8 +1,8 @@
 package com.raynigon.raylevation.infrastructure.configuration
 
+import jakarta.annotation.PostConstruct
 import org.gdal.gdal.gdal
 import org.springframework.context.annotation.Configuration
-import javax.annotation.PostConstruct
 
 /**
  * The GDALConfiguration loads the GDAL JNI Interface and registers all drivers.
