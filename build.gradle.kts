@@ -112,7 +112,7 @@ dependencies {
 
     // Documentation
     testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
-    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.7")
+    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.8")
 }
 
 dependencyManagement {
