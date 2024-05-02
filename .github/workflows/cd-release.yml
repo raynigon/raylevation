@@ -34,7 +34,7 @@ jobs:
           git config --global user.name "raynigon[bot]"
           git checkout -b release
       - name: "Publish Artifacts"
-        uses: eskatos/gradle-command-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12 #v2.2.1
+        uses: eskatos/gradle-command-action@4c39dd82cd5e1ec7c6fa0173bb41b4b6bb3b86ff #v2.2.1
         run: "./gradlew :release -Prelease.useAutomaticVersion=true -x check"
         env:
           GITHUB_USERNAME: raynigon
