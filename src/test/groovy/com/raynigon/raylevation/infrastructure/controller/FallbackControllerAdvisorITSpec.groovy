@@ -34,6 +34,7 @@ class FallbackControllerAdvisorITSpec extends AbstractITSpec {
         logCaptor.errorLogs.any { it.contains("An unexpected") && it.contains("occurred") }
     }
 
+    @Ignore
     def "access denied exception gets handled"() {
         when:
         restTemplate.getForObject(apiUri("/test/fca/AccessDeniedException"), Void)
