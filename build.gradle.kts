@@ -10,33 +10,33 @@ plugins {
     id("signing")
     id("maven-publish")
 
-    id("org.springframework.boot") version "2.7.5"
-    id("org.springframework.cloud.contract") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.2.4"
+    id("org.springframework.cloud.contract") version "4.0.4"
+    id("io.spring.dependency-management") version "1.1.4"
 
     // Auto Release
     id("net.researchgate.release") version "3.0.2"
 
     // Dependency Check
-    id("org.owasp.dependencycheck") version "8.2.1"
+    id("org.owasp.dependencycheck") version "9.0.7"
 
     // Docker Container Build
-    id("com.google.cloud.tools.jib") version "3.3.1"
+    id("com.google.cloud.tools.jib") version "3.4.0"
 
     // Linter
     id("pmd")
     id("checkstyle")
-    id("com.github.spotbugs") version "5.0.14"
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
+    id("com.github.spotbugs") version "6.0.9"
+    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
 
     // Kotlin
-    kotlin("jvm") version "1.8.21"
-    kotlin("plugin.spring") version "1.8.21"
-    kotlin("plugin.jpa") version "1.8.21"
-    kotlin("kapt") version "1.8.21"
+    kotlin("jvm") version "1.9.10"
+    kotlin("plugin.spring") version "1.9.23"
+    kotlin("plugin.jpa") version "1.9.20"
+    kotlin("kapt") version "1.9.22"
 
     // Dokka
-    id("org.jetbrains.dokka") version "1.8.10"
+    id("org.jetbrains.dokka") version "1.9.0"
     id("com.dorongold.task-tree") version "2.1.1"
 }
 
@@ -72,26 +72,26 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-spring-boot2")
 
     // unit-api
-    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:2.0.1")
-    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:2.0.1")
-    implementation("com.raynigon.unit-api:unit-api-kotlin:2.0.1")
+    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:3.0.8")
+    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:3.0.8")
+    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.8")
 
     // Logging
     implementation("com.raynigon.spring-boot:ecs-logging-app:1.1.4")
-    implementation("com.raynigon.spring-boot:ecs-logging-access:1.1.4")
-    implementation("com.raynigon.spring-boot:ecs-logging-async:1.1.4")
+    implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.6")
+    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.6")
 
     // Helpers
-    implementation("org.gdal:gdal:3.7.0")
-    implementation("com.github.davidmoten:rtree:0.10")
+    implementation("org.gdal:gdal:3.8.0")
+    implementation("com.github.davidmoten:rtree:0.11")
     implementation("com.github.davidmoten:geo:0.8.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
 
     // Spock
-    testImplementation("org.codehaus.groovy:groovy-all:3.0.17")
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.20")
     testImplementation("org.spockframework:spock-core:2.1-groovy-3.0")
     testImplementation("org.spockframework:spock-spring:2.1-groovy-3.0")
 
@@ -104,18 +104,18 @@ dependencies {
     testImplementation("org.testcontainers:spock")
 
     // Mockk
-    testImplementation("io.mockk:mockk:1.13.5")
-    testImplementation("io.github.hakky54:logcaptor:2.9.0")
+    testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("io.github.hakky54:logcaptor:2.9.2")
 
     // Documentation
-    testImplementation("org.springdoc:springdoc-openapi-ui:1.7.0")
+    testImplementation("org.springdoc:springdoc-openapi-ui:1.8.0")
     testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:2.0.1")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("org.testcontainers:testcontainers-bom:1.18.0")
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.5")
+        mavenBom("org.testcontainers:testcontainers-bom:1.19.7")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2022.0.4")
     }
 }
 
