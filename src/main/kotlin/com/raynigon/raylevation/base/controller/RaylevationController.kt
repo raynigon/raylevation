@@ -24,9 +24,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/lookup")
 class RaylevationController(
     private val parser: LocationsParser,
-    private val service: RaylevationService
+    private val service: RaylevationService,
 ) {
-
     /**
      * Elevation request endpoint for query string requests
      * @param locationsParam the locations as pipe seperated list of coordinates
@@ -34,7 +33,9 @@ class RaylevationController(
      * or an error if no elevation data could be found
      */
     @GetMapping
-    fun getElevation(@RequestParam("locations", defaultValue = "") locationsParam: String): ElevationResponse =
+    fun getElevation(
+        @RequestParam("locations", defaultValue = "") locationsParam: String,
+    ): ElevationResponse =
         parser.parse(locationsParam)
             .let(service::lookup)
             .map { ElevationResult(it.point, it.elevation, it.error) }
@@ -47,7 +48,9 @@ class RaylevationController(
      * or an error if no elevation data could be found
      */
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun getElevation(@RequestBody body: ElevationRequest): ElevationResponse =
+    fun getElevation(
+        @RequestBody body: ElevationRequest,
+    ): ElevationResponse =
         body.locations.let(service::lookup)
             .map { ElevationResult(it.point, it.elevation, it.error) }
             .let(::ElevationResponse)

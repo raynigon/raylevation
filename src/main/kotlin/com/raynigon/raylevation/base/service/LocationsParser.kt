@@ -16,7 +16,6 @@ import java.text.ParseException
  * ```
  */
 interface LocationsParser {
-
     /**
      * Parse the query string into [GeoPoint]s.
      *
@@ -31,14 +30,16 @@ interface LocationsParser {
  */
 @Service
 class LocationsParserImpl : LocationsParser {
-
     override fun parse(input: String): List<GeoPoint> {
         if (input.isEmpty()) return emptyList()
         return input.split('|')
             .map { toGeoPoint(it, input) }
     }
 
-    private fun toGeoPoint(point: String, totalInput: String): GeoPoint {
+    private fun toGeoPoint(
+        point: String,
+        totalInput: String,
+    ): GeoPoint {
         val parts = point.split(",").mapNotNull { it.toDoubleOrNull() }
         if (parts.size != 2) {
             val index = totalInput.indexOf(point)

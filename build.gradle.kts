@@ -132,8 +132,8 @@ contracts {
 
     includedFiles.set(
         listOf(
-            "v1/*.yaml"
-        )
+            "v1/*.yaml",
+        ),
     )
 
     ignoredFiles.set(emptyList())
@@ -143,7 +143,7 @@ contracts {
 
     baseClassMappings.baseClassMapping(
         ".*\\.v1\\.lookup",
-        "$namespace.RaylevationControllerV1Base"
+        "$namespace.RaylevationControllerV1Base",
     )
 }
 
@@ -209,9 +209,10 @@ jib {
         mainClass = "com.raynigon.raylevation.RaylevationApplicationKt"
         ports = listOf("8080")
         user = "1000"
-        environment = mapOf(
-            "SPRING_MAIN_BANNER-MODE" to "off"
-        )
+        environment =
+            mapOf(
+                "SPRING_MAIN_BANNER-MODE" to "off",
+            )
         labels.put("org.opencontainers.image.created", OffsetDateTime.now().toString())
         labels.put("org.opencontainers.image.authors", "Raynigon <opensource@raynigon.de>")
         labels.put("org.opencontainers.image.url", "https://github.com/raynigon/raylevation/releases/tag/v${project.version}")
@@ -223,7 +224,7 @@ jib {
         labels.put("org.opencontainers.image.title", "Raylevation Server")
         labels.put(
             "org.opencontainers.image.description",
-            "The Raylevation Server Docker Image provides the application with all dependencies"
+            "The Raylevation Server Docker Image provides the application with all dependencies",
         )
     }
 }

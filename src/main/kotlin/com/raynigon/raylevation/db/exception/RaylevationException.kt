@@ -11,7 +11,7 @@ import java.nio.file.Path
  */
 sealed class RaylevationException(
     message: String? = null,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : RuntimeException(message, cause)
 
 /**
@@ -33,9 +33,8 @@ data class LookupOutOfBoundsException(val point: GeoPoint, val bounds: TileBound
  * this exception is thrown.
  */
 class IncompatibleTileException(message: String) : RaylevationException(message) {
-
     constructor(path: Path, reason: String, given: Int, expected: Int) : this(
-        "Tile ($path) $reason.\nGiven: $given\tExpected: $expected"
+        "Tile ($path) $reason.\nGiven: $given\tExpected: $expected",
     )
 }
 
@@ -44,8 +43,7 @@ class IncompatibleTileException(message: String) : RaylevationException(message)
  */
 data class GDALException(
     val errorNumber: Int,
-    val errorMessage: String
+    val errorMessage: String,
 ) : RaylevationException("GDAL error occured with ErrorNumber=$errorNumber and Message=$errorMessage") {
-
     constructor() : this(gdal.GetLastErrorNo(), gdal.GetLastErrorMsg())
 }

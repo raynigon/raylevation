@@ -35,12 +35,19 @@ class FallbackControllerAdvisor : ResponseEntityExceptionHandler() {
         body: Any?,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
-    ): ResponseEntity<Any> = ApiError(
-        super.handleExceptionInternal(ex, body, headers, status, request)!!.statusCode.let { HttpStatus.valueOf(it.value()) },
-        body.toString(),
-        emptyList()
-    ).toResponseEntity() as ResponseEntity<Any>
+        request: WebRequest,
+    ): ResponseEntity<Any> =
+        ApiError(
+            super.handleExceptionInternal(
+                ex,
+                body,
+                headers,
+                status,
+                request,
+            )!!.statusCode.let { HttpStatus.valueOf(it.value()) },
+            body.toString(),
+            emptyList(),
+        ).toResponseEntity() as ResponseEntity<Any>
 
     /**
      * Handle all generic [Exception] by generating an [ApiError] with Status [HttpStatus.INTERNAL_SERVER_ERROR].
@@ -52,7 +59,8 @@ class FallbackControllerAdvisor : ResponseEntityExceptionHandler() {
         return ApiError(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "UnexpectedException",
-            "An unexpected Exception occurred" // do not expose information here
+            // do not expose information here
+            "An unexpected Exception occurred",
         ).toResponseEntity()
     }
 
@@ -66,7 +74,7 @@ class FallbackControllerAdvisor : ResponseEntityExceptionHandler() {
         return ApiError(
             HttpStatus.FORBIDDEN,
             "AccessDenied",
-            "Access to the resource is forbidden"
+            "Access to the resource is forbidden",
         ).toResponseEntity()
     }
 
@@ -79,7 +87,8 @@ class FallbackControllerAdvisor : ResponseEntityExceptionHandler() {
         return ApiError(
             exception.statusCode,
             exception.statusCode.toString(),
-            "An unspecified Error occurred" // do not expose information here
+            // do not expose information here
+            "An unspecified Error occurred",
         ).toResponseEntity()
     }
 }

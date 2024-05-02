@@ -11,7 +11,7 @@ import java.lang.Thread.sleep
 class ProcessLogger(
     private val process: Process,
     private val logger: Logger,
-    private val prefix: String
+    private val prefix: String,
 ) {
     private val stdoutThread: Thread = Thread { parse(process.inputStream, logger::info) }
     private val stderrThread: Thread = Thread { parse(process.errorStream, logger::error) }
@@ -30,7 +30,10 @@ class ProcessLogger(
         stderrThread.join()
     }
 
-    private fun parse(stream: InputStream, logger: (String) -> Unit) {
+    private fun parse(
+        stream: InputStream,
+        logger: (String) -> Unit,
+    ) {
         var buffer = ""
         while (process.isAlive || stream.available() > 0) {
             if (stream.available() <= 0) {

@@ -27,7 +27,6 @@ import kotlin.io.path.absolutePathString
  * @param path    The path on the file system on which the GeoTiff file is present
  */
 class GDALTile(val path: Path) {
-
     companion object {
         private const val EPSG_WGS84 = 4326
         private val SEA_LEVEL: Quantity<Length> = Metre(0)
@@ -61,14 +60,15 @@ class GDALTile(val path: Path) {
         coordinateTransform = CoordinateTransformation(spatialReference, spatialReferenceRaster)
         geoTransform = dataset.GetGeoTransform()
         val dev = geoTransform[1] * geoTransform[5] - geoTransform[2] * geoTransform[4]
-        geoTransformInv = doubleArrayOf(
-            geoTransform[0],
-            geoTransform[5] / dev,
-            -geoTransform[2] / dev,
-            geoTransform[3],
-            -geoTransform[4] / dev,
-            geoTransform[1] / dev
-        )
+        geoTransformInv =
+            doubleArrayOf(
+                geoTransform[0],
+                geoTransform[5] / dev,
+                -geoTransform[2] / dev,
+                geoTransform[3],
+                -geoTransform[4] / dev,
+                geoTransform[1] / dev,
+            )
     }
 
     val bounds: TileBounds by lazy {
@@ -164,17 +164,18 @@ class GDALTile(val path: Path) {
         return GDALTile(target.toPath())
     }
 
-    private fun createTranslateOptions(bounds: TileBounds) = TranslateOptions(
-        Vector<Any>(
-            listOf(
-                "-of",
-                "GTiff",
-                "-projWin",
-                bounds.xMin.toString(),
-                bounds.yMax.toString(),
-                bounds.xMax.toString(),
-                bounds.yMin.toString()
-            )
+    private fun createTranslateOptions(bounds: TileBounds) =
+        TranslateOptions(
+            Vector<Any>(
+                listOf(
+                    "-of",
+                    "GTiff",
+                    "-projWin",
+                    bounds.xMin.toString(),
+                    bounds.yMax.toString(),
+                    bounds.xMax.toString(),
+                    bounds.yMin.toString(),
+                ),
+            ),
         )
-    )
 }

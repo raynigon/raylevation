@@ -15,14 +15,16 @@ import kotlin.io.path.name
  * The TileUnpackService decompresses the downloaded rar archive for a given origin file.
  */
 interface TileUnpackService {
-
     /**
      * Decompresses the downloaded rar archive for a given tile
      * @param tile    The origin tile for which the archive should be decompressed
      * @param target  The target path where the decompressed data should be written to
      * @return A new instance of an [OriginTile] which contains the path to the decompressed archive
      */
-    fun unpackArchive(tile: OriginTile, target: Path): OriginTile
+    fun unpackArchive(
+        tile: OriginTile,
+        target: Path,
+    ): OriginTile
 }
 
 /**
@@ -33,17 +35,21 @@ interface TileUnpackService {
 class TileUnpackServiceImpl(private val config: SRTMConfig) : TileUnpackService {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun unpackArchive(tile: OriginTile, target: Path): OriginTile {
+    override fun unpackArchive(
+        tile: OriginTile,
+        target: Path,
+    ): OriginTile {
         // Return if the rar file was already extracted
         findGeoTiff(target)?.let {
             logger.info("${tile.name} was already unpacked, using existing GeoTiff: $it")
             return tile.copy(geoTiffPath = it)
         }
         // GeoTiff was not extracted
-        val process = ProcessBuilder()
-            .directory(target.toFile())
-            .command("unrar", "e", tile.archivePath!!.toAbsolutePath().toString())
-            .start()
+        val process =
+            ProcessBuilder()
+                .directory(target.toFile())
+                .command("unrar", "e", tile.archivePath!!.toAbsolutePath().toString())
+                .start()
         ProcessLogger(process, logger, "UNRAR: ")
         if (process.waitFor() != 0) {
             TODO("Raise exception, unrar failed")

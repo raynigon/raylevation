@@ -11,13 +11,15 @@ import java.nio.file.Files
  * The split configuration is provided by the [OriginTile]
  */
 interface TileSplitService {
-
     /**
      * Splits the tiles in x*y sub tiles.
      * @param tile        The split configuration and tile
      * @param callback    Gets called for each new sub tile
      */
-    fun split(tile: OriginTile, callback: (GDALTile, OriginTile) -> Unit)
+    fun split(
+        tile: OriginTile,
+        callback: (GDALTile, OriginTile) -> Unit,
+    )
 }
 
 /**
@@ -25,8 +27,10 @@ interface TileSplitService {
  */
 @Service
 class TileSplitServiceImpl : TileSplitService {
-
-    override fun split(tile: OriginTile, callback: (GDALTile, OriginTile) -> Unit) {
+    override fun split(
+        tile: OriginTile,
+        callback: (GDALTile, OriginTile) -> Unit,
+    ) {
         val gdalTile = GDALTile(tile.geoTiffPath!!)
         val bounds = gdalTile.bounds
         val cx = (bounds.xMax - bounds.xMin) / tile.splitX

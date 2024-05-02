@@ -18,7 +18,7 @@ data class SRTMConfig(
     val url: String,
     @NestedConfigurationProperty
     val tiles: List<OriginTileConfig>,
-    val saveDiskSpace: Boolean = false
+    val saveDiskSpace: Boolean = false,
 )
 
 /**
@@ -31,5 +31,5 @@ data class SRTMConfig(
 data class OriginTileConfig(
     val name: String,
     val splitX: Int,
-    val splitY: Int
+    val splitY: Int,
 )

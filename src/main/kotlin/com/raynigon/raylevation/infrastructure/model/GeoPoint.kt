@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
  */
 data class GeoPoint(
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
 ) {
     init {
         require(LATITUDE_RANGE.contains(latitude)) { "Latitude $latitude is not in range $LATITUDE_RANGE" }

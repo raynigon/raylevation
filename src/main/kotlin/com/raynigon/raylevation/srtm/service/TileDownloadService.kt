@@ -17,7 +17,6 @@ import java.nio.file.Path
  * Downloads the Rar Archive for a given [OriginTile]
  */
 interface TileDownloadService {
-
     /**
      * Load the remote E-Tag for a given OriginTile
      */
@@ -26,7 +25,10 @@ interface TileDownloadService {
     /**
      * Download a given OriginTile as rar file
      */
-    fun downloadTile(tile: OriginTile, target: Path): OriginTile
+    fun downloadTile(
+        tile: OriginTile,
+        target: Path,
+    ): OriginTile
 }
 
 /**
@@ -34,7 +36,7 @@ interface TileDownloadService {
  */
 @Service
 class TileDownloadServiceImpl(
-    private val config: SRTMConfig
+    private val config: SRTMConfig,
 ) : TileDownloadService {
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val client = HttpClientBuilder.create().build()
@@ -54,7 +56,10 @@ class TileDownloadServiceImpl(
         return readRemoteETag(url) ?: "-"
     }
 
-    override fun downloadTile(tile: OriginTile, target: Path): OriginTile {
+    override fun downloadTile(
+        tile: OriginTile,
+        target: Path,
+    ): OriginTile {
         val url = config.url.replace(URL_PLACEHOLDER, tile.name)
         val etagPath = target.resolve("${tile.name}$ETAG_FILE_SUFFIX")
         val contentPath = target.resolve("${tile.name}$CONTENT_FILE_SUFFIX")
@@ -62,12 +67,13 @@ class TileDownloadServiceImpl(
         val remoteETag = readRemoteETag(url)
 
         // Do not download again if etag matched
-        val etag = if (localETag == remoteETag && localETag != null) {
-            logger.info("${tile.name} already exists in the correct version. Local: $localETag Remote: $remoteETag")
-            localETag
-        } else {
-            downloadFile(url, contentPath, etagPath)
-        }
+        val etag =
+            if (localETag == remoteETag && localETag != null) {
+                logger.info("${tile.name} already exists in the correct version. Local: $localETag Remote: $remoteETag")
+                localETag
+            } else {
+                downloadFile(url, contentPath, etagPath)
+            }
         return tile.copy(etag = etag, etagPath = etagPath, archivePath = contentPath)
     }
 
@@ -85,7 +91,7 @@ class TileDownloadServiceImpl(
     private fun downloadFile(
         url: String,
         contentPath: Path,
-        etagPath: Path?
+        etagPath: Path?,
     ): String {
         val request = HttpGet(url)
         val response = client.execute(request)

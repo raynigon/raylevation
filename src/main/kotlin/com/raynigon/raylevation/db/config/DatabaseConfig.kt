@@ -10,5 +10,5 @@ import java.nio.file.Path
 @ConfigurationProperties("app.raylevation.db")
 data class DatabaseConfig(
     val path: Path,
-    val cacheTileCount: Int
+    val cacheTileCount: Int,
 )

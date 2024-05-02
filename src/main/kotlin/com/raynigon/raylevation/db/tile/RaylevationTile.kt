@@ -15,7 +15,6 @@ import javax.measure.quantity.Length
  * The representation of one tile in the raylevation database
  */
 interface IRaylevationTile {
-
     /**
      * The unique name of this tile
      */
@@ -59,29 +58,30 @@ class RaylevationTile(
     override val name: String,
     override val path: Path,
     override val bounds: TileBounds,
-    registry: MeterRegistry
+    registry: MeterRegistry,
 ) : IRaylevationTile {
-
     private var tileCache: GDALTile? = null
     private val lookupCounter = LongAdder()
-    private val metricCounter = registry.counter(
-        "app.raylevation.db.tile.lookups",
-        "geoHash",
-        bounds.center.geoHash,
-        "latitude",
-        bounds.center.latitude.toString(),
-        "longitude",
-        bounds.center.longitude.toString()
-    )
-    private val metricCached = registry.gauge(
-        "app.raylevation.db.tile.cached",
-        setOf(
-            Tag.of("geoHash", bounds.center.geoHash),
-            Tag.of("latitude", bounds.center.latitude.toString()),
-            Tag.of("longitude", bounds.center.longitude.toString())
-        ),
-        AtomicInteger(0)
-    ) ?: error("Unable to initialize cached metric")
+    private val metricCounter =
+        registry.counter(
+            "app.raylevation.db.tile.lookups",
+            "geoHash",
+            bounds.center.geoHash,
+            "latitude",
+            bounds.center.latitude.toString(),
+            "longitude",
+            bounds.center.longitude.toString(),
+        )
+    private val metricCached =
+        registry.gauge(
+            "app.raylevation.db.tile.cached",
+            setOf(
+                Tag.of("geoHash", bounds.center.geoHash),
+                Tag.of("latitude", bounds.center.latitude.toString()),
+                Tag.of("longitude", bounds.center.longitude.toString()),
+            ),
+            AtomicInteger(0),
+        ) ?: error("Unable to initialize cached metric")
 
     override val lookups: Long get() = lookupCounter.sum()
 
@@ -104,8 +104,9 @@ class RaylevationTile(
         if (!bounds.contains(point)) {
             throw LookupOutOfBoundsException(point, bounds)
         }
-        val result = (tileCache ?: GDALTile(path))
-            .lookupElevation(point)
+        val result =
+            (tileCache ?: GDALTile(path))
+                .lookupElevation(point)
         incrementCounter()
         return result
     }

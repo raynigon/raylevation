@@ -12,5 +12,5 @@ data class OriginTile(
     val etag: String = "-",
     val etagPath: Path? = null,
     val archivePath: Path? = null,
-    val geoTiffPath: Path? = null
+    val geoTiffPath: Path? = null,
 )

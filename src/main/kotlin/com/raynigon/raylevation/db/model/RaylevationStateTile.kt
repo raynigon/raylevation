@@ -14,9 +14,8 @@ import java.nio.file.Path
  */
 data class RaylevationStateTile(
     val name: String,
-    val bounds: RaylevationStateBounds
+    val bounds: RaylevationStateBounds,
 ) {
-
     constructor(tile: IRaylevationTile) : this(tile.name, RaylevationStateBounds(tile.bounds))
 
     /**
@@ -26,12 +25,15 @@ data class RaylevationStateTile(
      * @param registry    The meter registry used by the [IRaylevationTile] to generate metrics
      * @return A [IRaylevationTile] instance which can be used to look up the elevation for a GeoPoint
      */
-    fun toRaylevationTile(tilesFolder: Path, registry: MeterRegistry): IRaylevationTile {
+    fun toRaylevationTile(
+        tilesFolder: Path,
+        registry: MeterRegistry,
+    ): IRaylevationTile {
         return RaylevationTile(
             name,
             tilesFolder.resolve("$name${RaylevationDB.GEOTIFF_FILE_SUFFIX}"),
             bounds.toTileBounds(),
-            registry
+            registry,
         )
     }
 }
