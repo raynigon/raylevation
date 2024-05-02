@@ -41,7 +41,7 @@ plugins {
 }
 
 group = "com.raynigon.raylevation"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
     compileOnly {
@@ -159,7 +159,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
     withType<JacocoReport> {
@@ -176,7 +176,7 @@ tasks {
 jib {
     val commitHash: String = System.getenv("COMMIT_HASH") ?: "unknown_commit"
     from {
-        image = "ghcr.io/raynigon/raylevation-gdal-base:3.4.3"
+        image = "ghcr.io/raynigon/raylevation-gdal-base:3.8.0"
         auth {
             username = System.getenv("REGISTRY_USER")
             password = System.getenv("REGISTRY_PASSWORD")
