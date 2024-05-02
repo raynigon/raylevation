@@ -14,7 +14,6 @@ import java.nio.file.Path
  * Update the [IRaylevationDB] for this context with the latest SRTM tiles.
  */
 interface SRTMService {
-
     /**
      * Update the [IRaylevationDB] for this context with the latest SRTM tiles.
      */
@@ -31,9 +30,8 @@ class SRTMServiceImpl(
     private val factory: RaylevationDBFactory,
     private val downloadService: TileDownloadService,
     private val unpackService: TileUnpackService,
-    private val splitService: TileSplitService
+    private val splitService: TileSplitService,
 ) : SRTMService {
-
     companion object {
         const val METADATA_KEY_TILES = "raylevation.srtm.tiles"
     }
@@ -44,8 +42,9 @@ class SRTMServiceImpl(
 
     override fun updateRaylevationDB() {
         val database = factory.createLocked()
-        var tileState = database.getMetadata(METADATA_KEY_TILES, OriginTilesState::class.java)
-            ?: OriginTilesState()
+        var tileState =
+            database.getMetadata(METADATA_KEY_TILES, OriginTilesState::class.java)
+                ?: OriginTilesState()
         Files.createDirectories(workspace)
 
         for (originTile in tiles) {
@@ -82,14 +81,20 @@ class SRTMServiceImpl(
         database.close()
     }
 
-    private fun isUpToDate(tile: OriginTile, tileState: OriginTilesState): Boolean {
+    private fun isUpToDate(
+        tile: OriginTile,
+        tileState: OriginTilesState,
+    ): Boolean {
         if (!tileState.contains(tile)) return false
         val stateETag = tileState.getETag(tile)
         val remoteETag = downloadService.fetchETag(tile)
         return stateETag == remoteETag
     }
 
-    private fun createTileDirectory(tile: OriginTile, target: Path): Path {
+    private fun createTileDirectory(
+        tile: OriginTile,
+        target: Path,
+    ): Path {
         val tileDir = target.resolve(tile.name)
         Files.createDirectories(tileDir)
         return tileDir
@@ -100,7 +105,7 @@ class SRTMServiceImpl(
  * Temporary container for the setup of the SRTM tiles
  */
 data class OriginTilesState(
-    val tiles: List<OriginTileState> = emptyList()
+    val tiles: List<OriginTileState> = emptyList(),
 ) {
     /**
      * Create or update the given origin tile.
@@ -140,5 +145,5 @@ data class OriginTilesState(
  */
 data class OriginTileState(
     val name: String,
-    val etag: String
+    val etag: String,
 )

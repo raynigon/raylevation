@@ -53,9 +53,8 @@ interface RaylevationService {
 @EnableConfigurationProperties(DatabaseConfig::class)
 class RaylevationServiceImpl(
     raylevationDBFactory: RaylevationDBFactory,
-    private val asyncService: AsyncService
+    private val asyncService: AsyncService,
 ) : RaylevationService {
-
     companion object {
         const val PARALLEL_LIMIT = 10_000
         const val CACHE_REFRESH_INTERVAL = 1_000L

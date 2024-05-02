@@ -17,16 +17,16 @@ import java.text.SimpleDateFormat
  */
 @Configuration
 class JacksonConfiguration {
-
     /**
      * Configures the [ObjectMapper] used in the Application Context
      * @return A configured [ObjectMapper] instance
      */
     @Bean
     fun objectMapper(): ObjectMapper {
-        val mapper = JsonMapper.builder()
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-            .build()
+        val mapper =
+            JsonMapper.builder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                .build()
         mapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
         mapper.disable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)

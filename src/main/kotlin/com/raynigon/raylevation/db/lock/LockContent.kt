@@ -8,5 +8,5 @@ import java.util.UUID
  */
 data class LockContent(
     val lockId: UUID,
-    val updated: OffsetDateTime
+    val updated: OffsetDateTime,
 )

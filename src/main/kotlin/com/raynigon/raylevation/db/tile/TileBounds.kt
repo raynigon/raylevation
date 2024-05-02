@@ -16,7 +16,7 @@ data class TileBounds(
     val yMax: Double,
     val xMin: Double,
     val yMin: Double,
-    val xMax: Double
+    val xMax: Double,
 ) {
     init {
         require(xMax > xMin) { "X: $xMax is less than or equals $xMin" }
@@ -27,13 +27,13 @@ data class TileBounds(
         upperLeft.latitude,
         upperLeft.longitude,
         lowerRight.latitude,
-        lowerRight.longitude
+        lowerRight.longitude,
     )
 
     val center: GeoPoint by lazy {
         GeoPoint(
             longitude = xMin + (xMax - xMin) / 2.0,
-            latitude = yMin + (yMax - yMin) / 2.0
+            latitude = yMin + (yMax - yMin) / 2.0,
         )
     }
 

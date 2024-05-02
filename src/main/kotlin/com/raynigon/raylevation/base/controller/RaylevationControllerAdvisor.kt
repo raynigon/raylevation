@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus
 @ControllerAdvice(assignableTypes = [RaylevationController::class])
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class RaylevationControllerAdvisor {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -30,7 +29,7 @@ class RaylevationControllerAdvisor {
         return ApiError(
             HttpStatus.BAD_REQUEST,
             "InvalidBody",
-            "Given request body is not valid"
+            "Given request body is not valid",
         ).toResponseEntity()
     }
 }

@@ -12,7 +12,6 @@ import kotlin.system.exitProcess
  * or can be started in a setup mode, to fill the raylevation db with data.
  */
 interface CliRunner : CommandLineRunner {
-
     /**
      * Process the given command line arguments
      *
@@ -34,9 +33,8 @@ interface CliRunner : CommandLineRunner {
  */
 @Service
 class CliRunnerImpl(
-    private val srtmService: SRTMService
+    private val srtmService: SRTMService,
 ) : CliRunner {
-
     companion object {
         const val CLI_CMD_ENV_NAME = "RAYLEVATION_CLI_CMD"
     }

@@ -18,7 +18,6 @@ import java.util.concurrent.TimeoutException
  * to ensure its not stolen by other clients.
  */
 interface IRaylevationDBLock {
-
     val lockId: UUID
 
     val locked: Boolean
@@ -64,9 +63,8 @@ fun IRaylevationDBLock?.isLocked(): Boolean {
  */
 class RaylevationDBLock(
     private val lockFile: Path,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) : IRaylevationDBLock {
-
     companion object {
         val LOCK_TIMEOUT: Duration = Duration.ofMinutes(15)
         val LOCKED_WAITING_PERIOD: Duration = Duration.ofMillis(100)

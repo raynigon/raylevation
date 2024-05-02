@@ -50,12 +50,13 @@ abstract class AbstractStandaloneMvcTest<T> {
         messageConverter.objectMapper = JacksonConfiguration().objectMapper()
 
         // Create Standalone Setup
-        val standaloneMockMvcBuilder = MockMvcBuilders
-            .standaloneSetup(controller)
-            .setControllerAdvice(controllerAdvices)
-            .setConversionService(conversionService)
-            .setValidator(SpringValidatorAdapter(validator))
-            .setMessageConverters(messageConverter)
+        val standaloneMockMvcBuilder =
+            MockMvcBuilders
+                .standaloneSetup(controller)
+                .setControllerAdvice(controllerAdvices)
+                .setConversionService(conversionService)
+                .setValidator(SpringValidatorAdapter(validator))
+                .setMessageConverters(messageConverter)
 
         RestAssuredMockMvc.standaloneSetup(standaloneMockMvcBuilder)
     }

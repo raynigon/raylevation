@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/health", "/actuator/healthcheck")
 class HealthCheckController {
-
     /**
      * Returns always "status: UP".
      * This should be used for lifeness and readyness probes in orchestrators.

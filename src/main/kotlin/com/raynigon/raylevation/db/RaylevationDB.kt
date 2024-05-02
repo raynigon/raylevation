@@ -35,7 +35,6 @@ import kotlin.math.round
  * The IRaylevationDB defines the interface to interact with the [RaylevationDB].
  */
 interface IRaylevationDB : Closeable {
-
     /**
      * Open the Raylevation Database.
      * This loads the metadata of all existing tiles into memory
@@ -79,11 +78,17 @@ interface IRaylevationDB : Closeable {
 
     /**
      */
-    fun <T> getMetadata(name: String, type: Class<T>): T?
+    fun <T> getMetadata(
+        name: String,
+        type: Class<T>,
+    ): T?
 
     /**
      */
-    fun <T> setMetadata(name: String, value: T)
+    fun <T> setMetadata(
+        name: String,
+        value: T,
+    )
 }
 
 /**
@@ -92,9 +97,8 @@ interface IRaylevationDB : Closeable {
 class RaylevationDB(
     private val config: DatabaseConfig,
     private val registry: MeterRegistry,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) : IRaylevationDB {
-
     companion object {
         const val STATE_FILE_NAME = "index.json"
         const val LOCK_FILE_NAME = "lock.json"
@@ -155,11 +159,12 @@ class RaylevationDB(
 
     override fun lookupElevation(point: GeoPoint): Quantity<Length> {
         val sample = Timer.start()
-        val tile = index.nearest(point.toPointDouble(), 360.0, 1)
-            .toBlocking()
-            .singleOrDefault(null)
-            ?.value()
-            ?: throw TileNotFoundException(point)
+        val tile =
+            index.nearest(point.toPointDouble(), 360.0, 1)
+                .toBlocking()
+                .singleOrDefault(null)
+                ?.value()
+                ?: throw TileNotFoundException(point)
         return tile.lookupElevation(point).also {
             // This is thread safe, because of internal synchronization
             sample.stop(lookupTimer)
@@ -169,16 +174,18 @@ class RaylevationDB(
     @Synchronized
     override fun syncCache() {
         // Find all tiles currently in cache
-        val tilesInCache = tiles.toList() // Create list as local copy
-            .filter(IRaylevationTile::cache)
-            .toSet()
+        val tilesInCache =
+            tiles.toList() // Create list as local copy
+                .filter(IRaylevationTile::cache)
+                .toSet()
         // Find all tiles which should be in the cache
-        val tilesToCache = tiles.toList() // Create list as local copy
-            .asSequence()
-            .filter { it.lookups > 0 }
-            .sortedByDescending { it.lookups }
-            .take(config.cacheTileCount)
-            .toSet()
+        val tilesToCache =
+            tiles.toList() // Create list as local copy
+                .asSequence()
+                .filter { it.lookups > 0 }
+                .sortedByDescending { it.lookups }
+                .take(config.cacheTileCount)
+                .toSet()
 
         // No change in cache, exit early
         if (tilesInCache == tilesToCache) {
@@ -208,13 +215,14 @@ class RaylevationDB(
             Files.createDirectories(tilesFolder)
         }
         val bounds = tile.bounds.roundOff()
-        val name = String.format(
-            "%+2.2f_%+2.2f_%+2.2f_%+2.2f",
-            bounds.yMax,
-            bounds.xMin,
-            bounds.yMin,
-            bounds.xMax
-        )
+        val name =
+            String.format(
+                "%+2.2f_%+2.2f_%+2.2f_%+2.2f",
+                bounds.yMax,
+                bounds.xMin,
+                bounds.yMin,
+                bounds.xMax,
+            )
         // Copy GDAL Tile to the database directory
         val tilePath = tilesFolder.resolve("$name$GEOTIFF_FILE_SUFFIX")
         tile.saveTo(tilePath)
@@ -222,13 +230,19 @@ class RaylevationDB(
         logger.info("Added Tile $name to database")
     }
 
-    override fun <T> getMetadata(name: String, type: Class<T>): T? {
+    override fun <T> getMetadata(
+        name: String,
+        type: Class<T>,
+    ): T? {
         val value = metadata[name] ?: return null
         return objectMapper.convertValue(value, type)
     }
 
     @Synchronized
-    override fun <T> setMetadata(name: String, value: T) {
+    override fun <T> setMetadata(
+        name: String,
+        value: T,
+    ) {
         metadata[name] = objectMapper.convertValue(value, Map::class.java)
     }
 
@@ -239,14 +253,18 @@ class RaylevationDB(
         }
         lock!!.update()
         val indexPath = config.path.resolve(STATE_FILE_NAME)
-        val state = RaylevationState1d0d0(
-            metadata = metadata,
-            tiles = tiles.map { RaylevationStateTile(it) }
-        )
+        val state =
+            RaylevationState1d0d0(
+                metadata = metadata,
+                tiles = tiles.map { RaylevationStateTile(it) },
+            )
         objectMapper.writeValue(indexPath.toFile(), state)
     }
 
-    private fun initDatabase(indexPath: Path, locked: Boolean) {
+    private fun initDatabase(
+        indexPath: Path,
+        locked: Boolean,
+    ) {
         if (!Files.exists(indexPath) && !locked) {
             throw FileNotFoundException(indexPath.toString())
         } else if (!Files.exists(indexPath)) {

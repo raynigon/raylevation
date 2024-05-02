@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration
  */
 @Configuration
 class GDALConfiguration {
-
     /**
      * Loads the GDAL JNI Interface and registers all drivers
      */

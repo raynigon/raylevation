@@ -7,5 +7,5 @@ import com.raynigon.raylevation.infrastructure.model.GeoPoint
  * The JSON document is deserialized into the object structure.
  */
 data class ElevationRequest(
-    val locations: List<GeoPoint>
+    val locations: List<GeoPoint>,
 )

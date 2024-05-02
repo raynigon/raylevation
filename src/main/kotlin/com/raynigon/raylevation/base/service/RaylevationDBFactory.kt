@@ -14,7 +14,6 @@ import java.nio.file.Files
  * in the current context.
  */
 interface RaylevationDBFactory {
-
     /**
      * Create the [IRaylevationDB] if not existing and return it in a read only state
      */
@@ -34,9 +33,8 @@ interface RaylevationDBFactory {
 class RaylevationDBFactoryImpl(
     private val databaseConfig: DatabaseConfig,
     private val meterRegistry: MeterRegistry,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) : RaylevationDBFactory {
-
     override fun create(): IRaylevationDB {
         // If the Database does not exist yet, we need to create it in locked mode
         if (!Files.exists(databaseConfig.path.resolve(RaylevationDB.STATE_FILE_NAME))) {
