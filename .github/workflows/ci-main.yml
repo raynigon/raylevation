@@ -38,7 +38,6 @@ jobs:
       - name: Checkstyle Linter
         run: "./gradlew checkstyleMain"
       - name: PMD Linter
-        uses: eskatos/gradle-command-action@v1.3.2
         run: "./gradlew pmdMain"
       - uses: jwgmeligmeyling/checkstyle-github-action@master
         with:
@@ -84,10 +83,10 @@ jobs:
         with:
           java-version: 17
           distribution: adopt
+      - name: "Setup gradle"
+        uses: gradle/actions/setup-gradle@v3.3.2
       - name: Generate javadoc
-        uses: eskatos/gradle-command-action@v1.3.2
-        with:
-          arguments: dokkaHtml
+        run: "./gradlew dokkaHtml"
       - name: Upload Dokka
         uses: sebastianpopp/ftp-action@releases/v2
         if: github.ref == 'refs/heads/main' || contains(github.ref, 'refs/tags/')
