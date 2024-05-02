@@ -63,7 +63,7 @@ jobs:
       - name: "Setup gradle"
         uses: gradle/actions/setup-gradle@v3.3.2
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: "ghcr.io"
           username: ${{ github.actor }}
