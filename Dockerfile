@@ -1,4 +1,4 @@
-FROM osgeo/gdal:ubuntu-full-3.8.0
+FROM ghcr.io/osgeo/gdal:ubuntu-full-3.8.0
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
