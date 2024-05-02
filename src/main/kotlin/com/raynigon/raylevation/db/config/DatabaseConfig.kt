@@ -1,7 +1,6 @@
 package com.raynigon.raylevation.db.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.bind.ConstructorBinding
 import java.nio.file.Path
 
 /**

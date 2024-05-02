@@ -1,6 +1,5 @@
 package com.raynigon.raylevation.infrastructure.model
 
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 
