@@ -3,6 +3,7 @@ package com.raynigon.raylevation.contracts
 import com.raynigon.raylevation.infrastructure.configuration.JacksonConfiguration
 import com.raynigon.raylevation.infrastructure.controller.FallbackControllerAdvisor
 import io.restassured.module.mockmvc.RestAssuredMockMvc
+import jakarta.validation.Validation
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.springframework.core.convert.converter.Converter
@@ -11,7 +12,6 @@ import org.springframework.format.support.FormattingConversionService
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter
-import javax.validation.Validation
 
 /**
  * Base class for StandaloneMvc Tests, with correct message converter,

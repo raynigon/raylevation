@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.Kapt
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 import java.time.OffsetDateTime
@@ -143,6 +145,18 @@ contracts {
         ".*\\.v1\\.lookup",
         "$namespace.RaylevationControllerV1Base"
     )
+}
+
+tasks.withType<Kapt> {
+    if (this.name == "kaptContractTestKotlin") {
+        this.enabled = false
+    }
+}
+
+tasks.withType<KaptGenerateStubs> {
+    if (this.name == "kaptGenerateStubsContractTestKotlin") {
+        this.enabled = false
+    }
 }
 
 tasks {
