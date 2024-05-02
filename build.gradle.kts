@@ -12,7 +12,7 @@ plugins {
     id("signing")
     id("maven-publish")
 
-    id("org.springframework.boot") version "3.2.4"
+    id("org.springframework.boot") version "3.2.5"
     id("org.springframework.cloud.contract") version "4.1.2"
     id("io.spring.dependency-management") version "1.1.4"
 
