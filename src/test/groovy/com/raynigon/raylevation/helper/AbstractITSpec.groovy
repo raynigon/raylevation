@@ -2,9 +2,8 @@ package com.raynigon.raylevation.helper
 
 
 import com.raynigon.raylevation.infrastructure.configuration.JacksonConfiguration
-import org.springframework.boot.test.autoconfigure.actuate.metrics.AutoConfigureMetrics
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.context.ActiveProfiles
@@ -12,12 +11,10 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 
-@AutoConfigureMetrics
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "app.scheduling.enable=false")
 @ContextConfiguration(initializers = [])
 abstract class AbstractITSpec extends Specification {
-
 
     @LocalServerPort
     private int port

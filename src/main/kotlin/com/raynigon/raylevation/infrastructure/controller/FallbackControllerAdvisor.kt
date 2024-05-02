@@ -6,6 +6,7 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -33,10 +34,10 @@ class FallbackControllerAdvisor : ResponseEntityExceptionHandler() {
         ex: java.lang.Exception,
         body: Any?,
         headers: HttpHeaders,
-        status: HttpStatus,
+        status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any> = ApiError(
-        super.handleExceptionInternal(ex, body, headers, status, request).statusCode,
+        super.handleExceptionInternal(ex, body, headers, status, request)!!.statusCode.let { HttpStatus.valueOf(it.value()) },
         body.toString(),
         emptyList()
     ).toResponseEntity() as ResponseEntity<Any>
@@ -76,8 +77,8 @@ class FallbackControllerAdvisor : ResponseEntityExceptionHandler() {
     fun handleResponseStatusException(exception: ResponseStatusException): ResponseEntity<ApiError> {
         structuredLogger.info("A ResponseStatusException occurred", exception)
         return ApiError(
-            exception.status,
-            exception.status.reasonPhrase,
+            exception.statusCode,
+            exception.statusCode.toString(),
             "An unspecified Error occurred" // do not expose information here
         ).toResponseEntity()
     }

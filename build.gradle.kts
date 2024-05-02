@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.Kapt
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 import java.time.OffsetDateTime
@@ -11,7 +13,7 @@ plugins {
     id("maven-publish")
 
     id("org.springframework.boot") version "3.2.4"
-    id("org.springframework.cloud.contract") version "4.0.4"
+    id("org.springframework.cloud.contract") version "4.1.2"
     id("io.spring.dependency-management") version "1.1.4"
 
     // Auto Release
@@ -41,7 +43,7 @@ plugins {
 }
 
 group = "com.raynigon.raylevation"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
     compileOnly {
@@ -82,7 +84,7 @@ dependencies {
     implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.6")
 
     // Helpers
-    implementation("org.gdal:gdal:3.4.0")
+    implementation("org.gdal:gdal:3.8.0")
     implementation("com.github.davidmoten:rtree:0.11")
     implementation("com.github.davidmoten:geo:0.8.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -91,9 +93,10 @@ dependencies {
     implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
 
     // Spock
-    testImplementation("org.codehaus.groovy:groovy-all:3.0.20")
-    testImplementation("org.spockframework:spock-core:2.1-groovy-3.0")
-    testImplementation("org.spockframework:spock-spring:2.1-groovy-3.0")
+    testImplementation("org.apache.groovy:groovy:4.0.21")
+    testImplementation(platform("org.spockframework:spock-bom:2.4-M4-groovy-4.0"))
+    testImplementation("org.spockframework:spock-core")
+    testImplementation("org.spockframework:spock-spring")
 
     // Spring
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -108,8 +111,8 @@ dependencies {
     testImplementation("io.github.hakky54:logcaptor:2.9.2")
 
     // Documentation
-    testImplementation("org.springdoc:springdoc-openapi-ui:1.8.0")
-    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:2.0.1")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.7")
 }
 
 dependencyManagement {
@@ -144,6 +147,18 @@ contracts {
     )
 }
 
+tasks.withType<Kapt> {
+    if (this.name == "kaptContractTestKotlin") {
+        this.enabled = false
+    }
+}
+
+tasks.withType<KaptGenerateStubs> {
+    if (this.name == "kaptGenerateStubsContractTestKotlin") {
+        this.enabled = false
+    }
+}
+
 tasks {
     named("processContractTestResources") {
         dependsOn("generateContractTests")
@@ -159,7 +174,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
     withType<JacocoReport> {
@@ -176,7 +191,7 @@ tasks {
 jib {
     val commitHash: String = System.getenv("COMMIT_HASH") ?: "unknown_commit"
     from {
-        image = "ghcr.io/raynigon/raylevation-gdal-base:3.4.3"
+        image = "ghcr.io/raynigon/raylevation-gdal-base:3.8.0"
         auth {
             username = System.getenv("REGISTRY_USER")
             password = System.getenv("REGISTRY_PASSWORD")

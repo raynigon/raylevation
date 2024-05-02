@@ -1,7 +1,6 @@
 package com.raynigon.raylevation.srtm.model
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import java.nio.file.Path
 
@@ -13,7 +12,6 @@ import java.nio.file.Path
  * @param tiles           The list of tiles to download
  * @param saveDiskSpace   The Disk Space saving mode deleted all files which are no longer needed. This causes a new download on each run.
  */
-@ConstructorBinding
 @ConfigurationProperties("app.raylevation.srtm")
 data class SRTMConfig(
     val workspace: Path,

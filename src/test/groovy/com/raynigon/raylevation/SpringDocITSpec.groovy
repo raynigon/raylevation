@@ -12,7 +12,7 @@ class SpringDocITSpec extends AbstractITSpec {
     def "write openapi to file"() {
         given:
         Path directory = Path.of("build/docs/openapi/")
-        Path fullPath = directory.resolve("app_service.json")
+        Path fullPath = directory.resolve("raylevation.json")
 
         when:
         def result = restTemplate.getForObject(URI.create("http://localhost:$port/v3/api-docs"), String.class)
