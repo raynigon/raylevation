@@ -118,7 +118,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:1.19.7")
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2022.0.4")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.1")
     }
 }
 
