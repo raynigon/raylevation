@@ -84,7 +84,7 @@ dependencies {
     implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.6")
 
     // Helpers
-    implementation("org.gdal:gdal:3.8.0")
+    implementation("org.gdal:gdal:3.8.5")
     implementation("com.github.davidmoten:rtree:0.11")
     implementation("com.github.davidmoten:geo:0.8.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -191,7 +191,7 @@ tasks {
 jib {
     val commitHash: String = System.getenv("COMMIT_HASH") ?: "unknown_commit"
     from {
-        image = "ghcr.io/raynigon/raylevation-gdal-base:3.8.0"
+        image = "ghcr.io/raynigon/raylevation-gdal-base:3.8.5"
         auth {
             username = System.getenv("REGISTRY_USER")
             password = System.getenv("REGISTRY_PASSWORD")
