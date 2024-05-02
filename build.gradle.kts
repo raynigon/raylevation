@@ -191,7 +191,7 @@ tasks {
 jib {
     val commitHash: String = System.getenv("COMMIT_HASH") ?: "unknown_commit"
     from {
-        image = "ghcr.io/raynigon/raylevation-gdal-base:3.8.0"
+        image = "ghcr.io/raynigon/raylevation-gdal-base:3.8.5"
         auth {
             username = System.getenv("REGISTRY_USER")
             password = System.getenv("REGISTRY_PASSWORD")

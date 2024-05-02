@@ -26,4 +26,4 @@ jobs:
         with:
           push: true
           context: .
-          tags: "ghcr.io/raynigon/raylevation-gdal-base:3.8.0"
+          tags: "ghcr.io/raynigon/raylevation-gdal-base:3.8.5"
