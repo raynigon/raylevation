@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/osgeo/gdal:ubuntu-full-3.8.5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: "Install Dependencies"
         run: |
           apt-get update
@@ -26,7 +26,7 @@ jobs:
     name: "Static Code Analysis"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4.2.1
         with:
           java-version: 17
@@ -55,7 +55,7 @@ jobs:
     name: "Build Docker Image"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4.2.1
         with:
           java-version: 17
@@ -78,7 +78,7 @@ jobs:
     name: "Code Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4.2.1
         with:
           java-version: 17
@@ -101,7 +101,7 @@ jobs:
     name: "User Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
@@ -124,7 +124,7 @@ jobs:
       group: "linting-k8s-${{ github.ref }}"
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: "Register Matchers"
         run: echo "::add-matcher::.github/matchers/kube-linter.json"
       - name: Scan yamls
