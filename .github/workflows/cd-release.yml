@@ -97,7 +97,7 @@ jobs:
             {{/pull_requests.dependencies}}
             {{/pull_requests.dependencies.length}}
       - name: "Github Release"
-        uses: softprops/action-gh-release@3989e4b325fd35af0f19f42a37021d50b48b77e0 #v1
+        uses: softprops/action-gh-release@69320dbe05506a9a39fc8ae11030b214ec2d1f87 #v1
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
