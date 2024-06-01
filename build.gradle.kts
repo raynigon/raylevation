@@ -34,7 +34,7 @@ plugins {
     // Kotlin
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
-    kotlin("plugin.jpa") version "1.9.20"
+    kotlin("plugin.jpa") version "2.0.0"
     kotlin("kapt") version "1.9.23"
 
     // Dokka
