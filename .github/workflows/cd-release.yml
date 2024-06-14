@@ -16,7 +16,7 @@ jobs:
           java-version: 21
           distribution: adopt
       - name: "Setup gradle"
-        uses: gradle/actions/setup-gradle@v3.3.2
+        uses: gradle/actions/setup-gradle@v3.4.0
       - name: Build base image
         run: |
           docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.8.5 .
