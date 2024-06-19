@@ -32,7 +32,7 @@ jobs:
           java-version: 17
           distribution: adopt
       - name: "Setup gradle"
-        uses: gradle/actions/setup-gradle@v3.4.0
+        uses: gradle/actions/setup-gradle@v3.4.2
       - name: Kotlin Linter
         run: "./gradlew ktlintCheck"
       - name: Checkstyle Linter
@@ -61,7 +61,7 @@ jobs:
           java-version: 17
           distribution: adopt
       - name: "Setup gradle"
-        uses: gradle/actions/setup-gradle@v3.4.0
+        uses: gradle/actions/setup-gradle@v3.4.2
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
@@ -84,7 +84,7 @@ jobs:
           java-version: 17
           distribution: adopt
       - name: "Setup gradle"
-        uses: gradle/actions/setup-gradle@v3.4.0
+        uses: gradle/actions/setup-gradle@v3.4.2
       - name: Generate javadoc
         run: "./gradlew dokkaHtml"
       - name: Upload Dokka
