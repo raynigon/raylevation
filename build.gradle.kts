@@ -85,7 +85,7 @@ dependencies {
 
     // Helpers
     implementation("org.gdal:gdal:3.8.0")
-    implementation("com.github.davidmoten:rtree:0.11")
+    implementation("com.github.davidmoten:rtree:0.12")
     implementation("com.github.davidmoten:geo:0.8.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
