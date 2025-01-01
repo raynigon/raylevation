@@ -38,7 +38,7 @@ plugins {
     kotlin("kapt") version "2.1.0"
 
     // Dokka
-    id("org.jetbrains.dokka") version "1.9.20"
+    id("org.jetbrains.dokka") version "2.0.0"
     id("com.dorongold.task-tree") version "4.0.0"
 }
 
