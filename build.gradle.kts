@@ -29,7 +29,7 @@ plugins {
     id("pmd")
     id("checkstyle")
     id("com.github.spotbugs") version "6.0.21"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
 
     // Kotlin
     kotlin("jvm") version "2.1.0"
