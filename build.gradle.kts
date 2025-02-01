@@ -17,7 +17,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
 
     // Auto Release
-    id("net.researchgate.release") version "3.0.2"
+    id("net.researchgate.release") version "3.1.0"
 
     // Dependency Check
     id("org.owasp.dependencycheck") version "11.1.1"
