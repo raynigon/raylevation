@@ -14,7 +14,7 @@ plugins {
 
     id("org.springframework.boot") version "3.4.0"
     id("org.springframework.cloud.contract") version "4.1.4"
-    id("io.spring.dependency-management") version "1.1.6"
+    id("io.spring.dependency-management") version "1.1.7"
 
     // Auto Release
     id("net.researchgate.release") version "3.1.0"
