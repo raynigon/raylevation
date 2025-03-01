@@ -111,7 +111,7 @@ dependencies {
     testImplementation("io.github.hakky54:logcaptor:2.10.1")
 
     // Documentation
-    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
     testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.8")
 }
 
