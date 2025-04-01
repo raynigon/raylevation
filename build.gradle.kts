@@ -80,7 +80,7 @@ dependencies {
 
     // Logging
     implementation("com.raynigon.spring-boot:ecs-logging-app:2.1.10")
-    implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.9")
+    implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.10")
     implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.7")
 
     // Helpers
