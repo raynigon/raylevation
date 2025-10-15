@@ -90,7 +90,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.4.3")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.5.1")
 
     // Spock
     testImplementation("org.apache.groovy:groovy:5.0.1")
