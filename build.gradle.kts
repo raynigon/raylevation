@@ -28,7 +28,7 @@ plugins {
     // Linter
     id("pmd")
     id("checkstyle")
-    id("com.github.spotbugs") version "6.2.1"
+    id("com.github.spotbugs") version "6.4.4"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
 
     // Kotlin
