@@ -74,9 +74,9 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-spring-boot2")
 
     // unit-api
-    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:3.0.9")
-    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:3.0.9")
-    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.9")
+    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:4.0.1")
+    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:4.0.1")
+    implementation("com.raynigon.unit-api:unit-api-kotlin:4.0.1")
 
     // Logging
     implementation("com.raynigon.spring-boot:ecs-logging-app:2.1.13")
@@ -112,7 +112,7 @@ dependencies {
 
     // Documentation
     testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
-    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.9")
+    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:4.0.1")
 }
 
 dependencyManagement {
