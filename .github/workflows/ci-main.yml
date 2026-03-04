@@ -1,21 +1,25 @@
 name: CI - Main
 on:
   push:
-    branches: [ ]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     name: "Test"
     runs-on: ubuntu-latest
-    container: ghcr.io/osgeo/gdal:ubuntu-full-3.8.5
+    container: ghcr.io/osgeo/gdal:ubuntu-full-3.11.0
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - name: "Install Dependencies"
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends unrar
+          apt-get install -y --no-install-recommends unrar openjdk-21-jdk-headless
       - name: Gradle Command - test
         run: "./gradlew clean test"
+        env:
+          JAVA_HOME: /usr/lib/jvm/java-21-openjdk-amd64
       - name: Codacy Publish
         uses: codacy/codacy-coverage-reporter-action@master
         if: github.actor != 'dependabot[bot]'
@@ -26,8 +30,8 @@ jobs:
     name: "Static Code Analysis"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5.0.0
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5.2.0
         with:
           java-version: 21
           distribution: temurin
@@ -55,8 +59,8 @@ jobs:
     name: "Build Docker Image"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5.0.0
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5.2.0
         with:
           java-version: 21
           distribution: temurin
@@ -78,15 +82,15 @@ jobs:
     name: "Code Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5.0.0
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5.2.0
         with:
           java-version: 21
           distribution: temurin
       - name: "Setup gradle"
         uses: gradle/actions/setup-gradle@v5
       - name: Generate javadoc
-        run: "./gradlew dokkaHtml"
+        run: "./gradlew dokkaGenerateHtml"
       - name: Upload Dokka
         uses: sebastianpopp/ftp-action@releases/v2
         if: github.ref == 'refs/heads/main' || contains(github.ref, 'refs/tags/')
@@ -101,10 +105,10 @@ jobs:
     name: "User Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.12'
       - run: pip3 install -r requirements.txt
       - run: mkdocs build -d build/site/
       - name: Upload documentation
@@ -124,7 +128,7 @@ jobs:
       group: "linting-k8s-${{ github.ref }}"
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - name: "Register Matchers"
         run: echo "::add-matcher::.github/matchers/kube-linter.json"
       - name: Scan yamls
