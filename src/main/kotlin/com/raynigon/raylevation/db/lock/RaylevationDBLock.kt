@@ -54,9 +54,7 @@ interface IRaylevationDBLock {
  *
  * @return True is the lock exists and is locked, in any other case false
  */
-fun IRaylevationDBLock?.isLocked(): Boolean {
-    return this != null && this.locked
-}
+fun IRaylevationDBLock?.isLocked(): Boolean = this != null && this.locked
 
 /**
  * Implementation of the [IRaylevationDBLock]

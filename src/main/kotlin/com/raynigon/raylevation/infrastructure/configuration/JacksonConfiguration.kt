@@ -24,7 +24,8 @@ class JacksonConfiguration {
     @Bean
     fun objectMapper(): ObjectMapper {
         val mapper =
-            JsonMapper.builder()
+            JsonMapper
+                .builder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
                 .build()
         mapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

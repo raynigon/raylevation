@@ -160,7 +160,8 @@ class RaylevationDB(
     override fun lookupElevation(point: GeoPoint): Quantity<Length> {
         val sample = Timer.start()
         val tile =
-            index.nearest(point.toPointDouble(), 360.0, 1)
+            index
+                .nearest(point.toPointDouble(), 360.0, 1)
                 .toBlocking()
                 .singleOrDefault(null)
                 ?.value()
@@ -175,12 +176,14 @@ class RaylevationDB(
     override fun syncCache() {
         // Find all tiles currently in cache
         val tilesInCache =
-            tiles.toList() // Create list as local copy
+            tiles
+                .toList() // Create list as local copy
                 .filter(IRaylevationTile::cache)
                 .toSet()
         // Find all tiles which should be in the cache
         val tilesToCache =
-            tiles.toList() // Create list as local copy
+            tiles
+                .toList() // Create list as local copy
                 .asSequence()
                 .filter { it.lookups > 0 }
                 .sortedByDescending { it.lookups }

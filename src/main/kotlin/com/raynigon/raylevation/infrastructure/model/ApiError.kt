@@ -11,7 +11,11 @@ import org.springframework.http.ResponseEntity
  * @param message Reason Phrase of the HTTP Status or descriptive error message
  * @param errors  Detailed error descriptions for each occurred error
  */
-data class ApiError(val status: HttpStatusCode, val message: String, val errors: List<String>) {
+data class ApiError(
+    val status: HttpStatusCode,
+    val message: String,
+    val errors: List<String>,
+) {
     constructor(status: HttpStatusCode, message: String, error: String) : this(status, message, listOf(error))
 
     /**

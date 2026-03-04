@@ -26,7 +26,9 @@ import kotlin.io.path.absolutePathString
  *
  * @param path    The path on the file system on which the GeoTiff file is present
  */
-class GDALTile(val path: Path) {
+class GDALTile(
+    val path: Path,
+) {
     companion object {
         private const val EPSG_WGS84 = 4326
         private val SEA_LEVEL: Quantity<Length> = Metre(0)

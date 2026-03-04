@@ -32,7 +32,8 @@ interface LocationsParser {
 class LocationsParserImpl : LocationsParser {
     override fun parse(input: String): List<GeoPoint> {
         if (input.isEmpty()) return emptyList()
-        return input.split('|')
+        return input
+            .split('|')
             .map { toGeoPoint(it, input) }
     }
 

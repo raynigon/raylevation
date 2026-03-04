@@ -21,7 +21,11 @@ import javax.measure.quantity.Length
  * @param elevation   The elevation which was found for the [point] or 0 if an error occurred
  * @param error       Contains the error message if an error occurred, else its null
  */
-data class LookupResult(val point: GeoPoint, val elevation: Quantity<Length>, val error: String? = null)
+data class LookupResult(
+    val point: GeoPoint,
+    val elevation: Quantity<Length>,
+    val error: String? = null,
+)
 
 /**
  * The Raylevation Service is a Bean which provides the functionality

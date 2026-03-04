@@ -13,9 +13,7 @@ import com.raynigon.raylevation.infrastructure.model.GeoPoint
  *
  * @return the [Point] representing the [GeoPoint] in a kartesian system
  */
-fun GeoPoint.toPointDouble(): Point {
-    return PointDouble.create(this.longitude, this.latitude)
-}
+fun GeoPoint.toPointDouble(): Point = PointDouble.create(this.longitude, this.latitude)
 
 /**
  * Create a bounding [Rectangle] for this tile.
@@ -23,6 +21,4 @@ fun GeoPoint.toPointDouble(): Point {
  *
  * @return the bounding [Rectangle] for this tile
  */
-fun IRaylevationTile.toRectangle(): Rectangle {
-    return RectangleDouble.create(bounds.xMin, bounds.yMin, bounds.xMax, bounds.yMax)
-}
+fun IRaylevationTile.toRectangle(): Rectangle = RectangleDouble.create(bounds.xMin, bounds.yMin, bounds.xMax, bounds.yMax)

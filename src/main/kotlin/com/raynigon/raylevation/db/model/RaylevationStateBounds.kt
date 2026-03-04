@@ -20,10 +20,9 @@ data class RaylevationStateBounds(
      * Convert to the TileBounds used in the raylevation database
      * @return The [TileBounds] representing the same area as this object
      */
-    fun toTileBounds(): TileBounds {
-        return TileBounds(
+    fun toTileBounds(): TileBounds =
+        TileBounds(
             GeoPoint(lat0, max(lon0, -180.0)),
             GeoPoint(lat1, min(lon1, 180.0)),
         )
-    }
 }

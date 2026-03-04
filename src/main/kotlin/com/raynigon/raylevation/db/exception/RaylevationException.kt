@@ -18,21 +18,26 @@ sealed class RaylevationException(
  * If not tile was found in which the GeoPoint is present,
  * this exception is thrown.
  */
-data class TileNotFoundException(val point: GeoPoint) :
-    RaylevationException("No Tile was found for $point")
+data class TileNotFoundException(
+    val point: GeoPoint,
+) : RaylevationException("No Tile was found for $point")
 
 /**
  * If a tile was used to look up a GeoPoint which is outside the tile bounds,
  * this exception is thrown.
  */
-data class LookupOutOfBoundsException(val point: GeoPoint, val bounds: TileBounds) :
-    RaylevationException("$point is not in bounds $bounds")
+data class LookupOutOfBoundsException(
+    val point: GeoPoint,
+    val bounds: TileBounds,
+) : RaylevationException("$point is not in bounds $bounds")
 
 /**
  * If a GeoTiff file was loaded which has other bands/types than the defines ones,
  * this exception is thrown.
  */
-class IncompatibleTileException(message: String) : RaylevationException(message) {
+class IncompatibleTileException(
+    message: String,
+) : RaylevationException(message) {
     constructor(path: Path, reason: String, given: Int, expected: Int) : this(
         "Tile ($path) $reason.\nGiven: $given\tExpected: $expected",
     )
