@@ -125,9 +125,7 @@ data class OriginTilesState(
      *  @param tile    The [OriginTile] which should be checked
      *  @return True if the tile exists, false if not
      */
-    fun contains(tile: OriginTile): Boolean {
-        return tiles.any { it.name == tile.name }
-    }
+    fun contains(tile: OriginTile): Boolean = tiles.any { it.name == tile.name }
 
     /**
      *  Returns the E-Tag for a given [OriginTile]
@@ -135,9 +133,7 @@ data class OriginTilesState(
      *  @param tile    The [OriginTile] for which the E-Tag should be queried
      *  @return The E-Tag of the given [OriginTile] or null if no E-Tag was found
      */
-    fun getETag(tile: OriginTile): String? {
-        return tiles.filter { it.name == tile.name }.map { it.etag }.firstOrNull()
-    }
+    fun getETag(tile: OriginTile): String? = tiles.filter { it.name == tile.name }.map { it.etag }.firstOrNull()
 }
 
 /**

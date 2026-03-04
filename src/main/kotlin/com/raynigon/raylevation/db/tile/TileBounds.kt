@@ -43,9 +43,7 @@ data class TileBounds(
      * @param point   The [GeoPoint] which should be checked
      * @return True if the bounds contain the given [GeoPoint], false if not
      */
-    fun contains(point: GeoPoint): Boolean {
-        return point.longitude in xMin..xMax && point.latitude in yMin..yMax
-    }
+    fun contains(point: GeoPoint): Boolean = point.longitude in xMin..xMax && point.latitude in yMin..yMax
 
     /**
      * Checks if another [TileBounds] is fully included the area of this bounds

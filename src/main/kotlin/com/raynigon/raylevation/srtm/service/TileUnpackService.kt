@@ -32,7 +32,9 @@ interface TileUnpackService {
  */
 @Service
 @EnableConfigurationProperties(SRTMConfig::class)
-class TileUnpackServiceImpl(private val config: SRTMConfig) : TileUnpackService {
+class TileUnpackServiceImpl(
+    private val config: SRTMConfig,
+) : TileUnpackService {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun unpackArchive(
@@ -64,9 +66,9 @@ class TileUnpackServiceImpl(private val config: SRTMConfig) : TileUnpackService 
         }
     }
 
-    private fun findGeoTiff(target: Path): Path? {
-        return Files.list(target)
+    private fun findGeoTiff(target: Path): Path? =
+        Files
+            .list(target)
             .collect(Collectors.toList())
             .firstOrNull { it.name.endsWith(".tif") }
-    }
 }

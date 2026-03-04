@@ -38,13 +38,16 @@ class FallbackControllerAdvisor : ResponseEntityExceptionHandler() {
         request: WebRequest,
     ): ResponseEntity<Any> =
         ApiError(
-            super.handleExceptionInternal(
-                ex,
-                body,
-                headers,
-                status,
-                request,
-            )!!.statusCode.let { HttpStatus.valueOf(it.value()) },
+            super
+                .handleExceptionInternal(
+                    ex,
+                    body,
+                    headers,
+                    status,
+                    request,
+                )!!
+                .statusCode
+                .let { HttpStatus.valueOf(it.value()) },
             body.toString(),
             emptyList(),
         ).toResponseEntity() as ResponseEntity<Any>

@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -12,8 +13,8 @@ plugins {
     id("signing")
     id("maven-publish")
 
-    id("org.springframework.boot") version "3.5.4"
-    id("org.springframework.cloud.contract") version "4.3.0"
+    id("org.springframework.boot") version "3.5.11"
+    id("org.springframework.cloud.contract") version "4.3.1"
     id("io.spring.dependency-management") version "1.1.7"
 
     // Auto Release
@@ -33,7 +34,7 @@ plugins {
 
     // Kotlin
     kotlin("jvm") version "2.2.21"
-    kotlin("plugin.spring") version "2.2.0"
+    kotlin("plugin.spring") version "2.2.21"
     kotlin("plugin.jpa") version "2.2.21"
     kotlin("kapt") version "2.2.21"
 
@@ -43,7 +44,7 @@ plugins {
 }
 
 group = "com.raynigon.raylevation"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 configurations {
     compileOnly {
@@ -52,10 +53,13 @@ configurations {
 }
 
 repositories {
+    mavenCentral()
     maven {
         url = URI.create("https://repo.osgeo.org/repository/release/")
+        content {
+            includeGroup("org.gdal")
+        }
     }
-    mavenCentral()
 }
 
 dependencies {
@@ -71,7 +75,7 @@ dependencies {
     // resilience4j
     implementation("io.github.resilience4j:resilience4j-all")
     implementation("io.github.resilience4j:resilience4j-kotlin")
-    implementation("io.github.resilience4j:resilience4j-spring-boot2")
+    implementation("io.github.resilience4j:resilience4j-spring-boot3")
 
     // unit-api
     implementation("com.raynigon.unit-api:spring-boot-jackson-starter:3.0.9")
@@ -81,7 +85,7 @@ dependencies {
     // Logging
     implementation("com.raynigon.spring-boot:ecs-logging-app:2.1.13")
     implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.13")
-    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.7")
+    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.13")
 
     // Helpers
     implementation("org.gdal:gdal:3.11.0")
@@ -90,10 +94,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.5.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
 
     // Spock
-    testImplementation("org.apache.groovy:groovy:5.0.2")
+    testImplementation("org.apache.groovy:groovy:4.0.30")
     testImplementation(platform("org.spockframework:spock-bom:2.4-M6-groovy-4.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-spring")
@@ -107,18 +111,18 @@ dependencies {
     testImplementation("org.testcontainers:spock")
 
     // Mockk
-    testImplementation("io.mockk:mockk:1.14.5")
-    testImplementation("io.github.hakky54:logcaptor:2.12.1")
+    testImplementation("io.mockk:mockk:1.14.9")
+    testImplementation("io.github.hakky54:logcaptor:2.12.5")
 
     // Documentation
-    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16")
     testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.9")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("org.testcontainers:testcontainers-bom:1.21.3")
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.0")
+        mavenBom("org.testcontainers:testcontainers-bom:1.21.4")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.0.1")
     }
 }
 
@@ -166,15 +170,22 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
 
-        testClassesDirs += sourceSets.contractTest.get().output.classesDirs
-        classpath += sourceSets.contractTest.get().runtimeClasspath
+        testClassesDirs +=
+            sourceSets.contractTest
+                .get()
+                .output
+                .classesDirs
+        classpath +=
+            sourceSets.contractTest
+                .get()
+                .runtimeClasspath
 
         finalizedBy(withType<JacocoReport>()) // report is always generated after tests run
     }
     withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
+        compilerOptions {
+            freeCompilerArgs.add("-Xjsr305=strict")
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
     withType<JacocoReport> {

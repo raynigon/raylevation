@@ -36,7 +36,8 @@ class RaylevationController(
     fun getElevation(
         @RequestParam("locations", defaultValue = "") locationsParam: String,
     ): ElevationResponse =
-        parser.parse(locationsParam)
+        parser
+            .parse(locationsParam)
             .let(service::lookup)
             .map { ElevationResult(it.point, it.elevation, it.error) }
             .let(::ElevationResponse)
@@ -51,7 +52,8 @@ class RaylevationController(
     fun getElevation(
         @RequestBody body: ElevationRequest,
     ): ElevationResponse =
-        body.locations.let(service::lookup)
+        body.locations
+            .let(service::lookup)
             .map { ElevationResult(it.point, it.elevation, it.error) }
             .let(::ElevationResponse)
 }

@@ -1,0 +1,48 @@
+name: "Copilot Setup Steps"
+
+# Run setup steps when this file changes (for easy validation),
+# and allow manual runs from the Actions tab.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` to be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Java 21 (Temurin)
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Install GDAL native libraries and unrar
+        run: |
+          sudo add-apt-repository -y ppa:ubuntugis/ppa
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gdal-bin \
+            libgdal-dev \
+            libgdal-java \
+            unrar
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
+
+      - name: Pre-warm Gradle dependency cache
+        run: ./gradlew dependencies --configuration compileClasspath --configuration testCompileClasspath --configuration runtimeClasspath

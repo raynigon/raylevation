@@ -28,12 +28,11 @@ data class RaylevationStateTile(
     fun toRaylevationTile(
         tilesFolder: Path,
         registry: MeterRegistry,
-    ): IRaylevationTile {
-        return RaylevationTile(
+    ): IRaylevationTile =
+        RaylevationTile(
             name,
             tilesFolder.resolve("$name${RaylevationDB.GEOTIFF_FILE_SUFFIX}"),
             bounds.toTileBounds(),
             registry,
         )
-    }
 }

@@ -29,8 +29,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-java@v5.0.0
         with:
-          java-version: 17
-          distribution: adopt
+          java-version: 21
+          distribution: temurin
       - name: "Setup gradle"
         uses: gradle/actions/setup-gradle@v5
       - name: Kotlin Linter
@@ -58,8 +58,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-java@v5.0.0
         with:
-          java-version: 17
-          distribution: adopt
+          java-version: 21
+          distribution: temurin
       - name: "Setup gradle"
         uses: gradle/actions/setup-gradle@v5
       - name: Login to DockerHub
@@ -81,8 +81,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-java@v5.0.0
         with:
-          java-version: 17
-          distribution: adopt
+          java-version: 21
+          distribution: temurin
       - name: "Setup gradle"
         uses: gradle/actions/setup-gradle@v5
       - name: Generate javadoc
