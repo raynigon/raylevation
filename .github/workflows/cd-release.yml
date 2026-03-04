@@ -7,7 +7,7 @@ jobs:
     name: "Build Release"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: "Setup Java JDK"
@@ -19,7 +19,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
       - name: Build base image
         run: |
-          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.8.5 .
+          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.11.0 .
       - id: vars
         name: "Determine Tag Name"
         run: |

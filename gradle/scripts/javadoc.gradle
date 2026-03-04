@@ -3,7 +3,8 @@ task sourcesJar(type: Jar) {
     archiveClassifier.set('sources')
 }
 
-task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
-    from "$buildDir/dokka/javadoc"
+task javadocJar(type: Jar) {
+    dependsOn tasks.named('dokkaGenerateHtml')
+    from "$buildDir/dokka/html"
     archiveClassifier.set('javadoc')
 }
