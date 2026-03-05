@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/osgeo/gdal:ubuntu-full-3.11.0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: "Install Dependencies"
         run: |
           apt-get update
@@ -105,7 +105,7 @@ jobs:
     name: "User Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -128,7 +128,7 @@ jobs:
       group: "linting-k8s-${{ github.ref }}"
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: "Register Matchers"
         run: echo "::add-matcher::.github/matchers/kube-linter.json"
       - name: Scan yamls
