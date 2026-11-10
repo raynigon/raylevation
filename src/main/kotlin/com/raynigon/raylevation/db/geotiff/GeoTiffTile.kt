@@ -31,6 +31,11 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
+private val SEA_LEVEL: Quantity<Length> = Metre(0)
+private const val EXPECTED_BANDS = 1
+private const val GDAL_PIXEL_OFFSET_TOLERANCE = 0.001
+private const val ROUND_TO_NEAREST = 0.5
+
 /**
  * The GeoTiffTile represents a GeoTiff file with exactly one band of signed 16 bit integers,
  * which provides the elevation data for the covered area in geographic WGS84 coordinates.
@@ -42,80 +47,18 @@ import kotlin.math.min
 class GeoTiffTile(
     val path: Path,
 ) {
-    companion object {
-        private val SEA_LEVEL: Quantity<Length> = Metre(0)
-        private const val EXPECTED_BANDS = 1
-
-        /**
-         * Tolerance used by GDAL (gdal_translate -projWin) to round a window offset to full pixels
-         */
-        private const val PIXEL_OFFSET_TOLERANCE = 0.001
-    }
-
-    private val metadata: Metadata = readMetadata()
-    private val width = metadata.width
-    private val height = metadata.height
-    private val originX = metadata.originX
-    private val originY = metadata.originY
-    private val pixelSizeX = metadata.pixelSizeX
-    private val pixelSizeY = metadata.pixelSizeY
-    private val noDataValue = metadata.noDataValue
+    private val metadata: Metadata = readAndValidateMetadata()
+    private val grid: PixelGrid = metadata.grid
+    private val noDataValue: Short? = metadata.noDataValue
     private var rasterCache: Array<ShortArray>? = null
 
-    /**
-     * Read and validate the structure and georeferencing of the GeoTiff file
-     */
-    private fun readMetadata(): Metadata =
-        withResource { resource ->
-            val sampleDimensions = resource.sampleDimensions
-            if (sampleDimensions.size != EXPECTED_BANDS) {
-                throw IncompatibleTileException(path, "has too many Raster Bands", sampleDimensions.size, EXPECTED_BANDS)
-            }
-            val gridGeometry = resource.gridGeometry
-            if (!isWGS84(gridGeometry.coordinateReferenceSystem)) {
-                throw IncompatibleTileException(
-                    "Tile ($path) has an incompatible coordinate reference system: " +
-                        "${gridGeometry.coordinateReferenceSystem.name}. Expected: WGS 84",
-                )
-            }
-            // Reading a single pixel is enough to determine the data type of the band
-            val firstPixel = GridExtent(null, longArrayOf(0, 0), longArrayOf(0, 0), true)
-            val dataType = readRaster(resource, firstPixel).dataType
-            if (dataType != DataBuffer.TYPE_SHORT) {
-                throw IncompatibleTileException(path, "has an incompatible data type on Band 1", dataType, DataBuffer.TYPE_SHORT)
-            }
-            val gridToCRS =
-                gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER) as? LinearTransform
-                    ?: throw IncompatibleTileException("Tile ($path) has a non linear grid to CRS transformation")
-            val matrix = gridToCRS.matrix
-            if (matrix.getElement(0, 1) != 0.0 || matrix.getElement(1, 0) != 0.0) {
-                throw IncompatibleTileException("Tile ($path) is rotated, only north up rasters are supported")
-            }
-            Metadata(
-                width = Math.toIntExact(gridGeometry.extent.getSize(0)),
-                height = Math.toIntExact(gridGeometry.extent.getSize(1)),
-                originX = matrix.getElement(0, 2),
-                originY = matrix.getElement(1, 2),
-                pixelSizeX = matrix.getElement(0, 0),
-                pixelSizeY = matrix.getElement(1, 1),
-                // Apache SIS exposes the GDAL_NODATA value as background of the sample dimension
-                noDataValue =
-                    sampleDimensions[0]
-                        .background
-                        .map { it.toShort() }
-                        .orElse(null),
-            )
-        }
-
-    val bounds: TileBounds by lazy {
-        TileBounds(originY, originX, originY + height * pixelSizeY, originX + width * pixelSizeX)
-    }
+    val bounds: TileBounds by lazy { grid.bounds }
 
     private val raster: Array<ShortArray>
         get() {
             val tmpRasterCache = rasterCache
             if (tmpRasterCache != null) return tmpRasterCache
-            val result = readWindow(0, 0, width, height)
+            val result = readPixelWindow(0, 0, grid.width, grid.height)
             rasterCache = result
             return result
         }
@@ -131,8 +74,8 @@ class GeoTiffTile(
     fun lookupElevation(point: GeoPoint): Quantity<Length> {
         // Convert the coordinate to pixel / line, the tile is always in WGS84 and north up.
         // Clamp to the raster, because points on the lower/right border belong to the last pixel.
-        val xpix = min(((point.longitude - originX) / pixelSizeX).toInt(), width - 1)
-        val ylin = min(((point.latitude - originY) / pixelSizeY).toInt(), height - 1)
+        val xpix = min(((point.longitude - grid.originX) / grid.pixelSizeX).toInt(), grid.width - 1)
+        val ylin = min(((point.latitude - grid.originY) / grid.pixelSizeY).toInt(), grid.height - 1)
 
         val elevation = raster[ylin][xpix]
 
@@ -164,15 +107,16 @@ class GeoTiffTile(
         if (!this.bounds.contains(bounds)) {
             throw InvalidSubTileException(path, this.bounds, bounds)
         }
-        // Pixel window as computed by gdal_translate for -projWin with nearest neighbour resampling
-        val xOff = floor((bounds.xMin - originX) / pixelSizeX + PIXEL_OFFSET_TOLERANCE).toInt()
-        val yOff = floor((bounds.yMax - originY) / pixelSizeY + PIXEL_OFFSET_TOLERANCE).toInt()
-        val xSize = floor((bounds.xMax - bounds.xMin) / pixelSizeX + 0.5).toInt()
-        val ySize = floor((bounds.yMin - bounds.yMax) / pixelSizeY + 0.5).toInt()
+        // Pixel window as computed by gdal_translate for -projWin with nearest neighbour resampling:
+        // the offset is rounded down with a small tolerance, the size is rounded to the nearest pixel
+        val xOff = floor((bounds.xMin - grid.originX) / grid.pixelSizeX + GDAL_PIXEL_OFFSET_TOLERANCE).toInt()
+        val yOff = floor((bounds.yMax - grid.originY) / grid.pixelSizeY + GDAL_PIXEL_OFFSET_TOLERANCE).toInt()
+        val xSize = floor((bounds.xMax - bounds.xMin) / grid.pixelSizeX + ROUND_TO_NEAREST).toInt()
+        val ySize = floor((bounds.yMin - bounds.yMax) / grid.pixelSizeY + ROUND_TO_NEAREST).toInt()
         val x0 = max(xOff, 0)
         val y0 = max(yOff, 0)
-        val x1 = min(xOff + xSize, width)
-        val y1 = min(yOff + ySize, height)
+        val x1 = min(xOff + xSize, grid.width)
+        val y1 = min(yOff + ySize, grid.height)
         if (x1 <= x0 || y1 <= y0) {
             throw InvalidSubTileException(path, this.bounds, bounds)
         }
@@ -181,27 +125,62 @@ class GeoTiffTile(
         target.deleteOnExit()
         GeoTiffWriter.write(
             target.toPath(),
-            readWindow(x0, y0, x1 - x0, y1 - y0),
-            originX + x0 * pixelSizeX,
-            originY + y0 * pixelSizeY,
-            pixelSizeX,
-            -pixelSizeY,
+            readPixelWindow(x0, y0, x1 - x0, y1 - y0),
+            grid.window(x0, y0, x1 - x0, y1 - y0),
             noDataValue,
         )
         return GeoTiffTile(target.toPath())
     }
 
-    /**
-     * Checks for geographic WGS84 with longitude first, as defined by GeoTIFF.
-     * No reprojection is supported, the pixel math in [lookupElevation] relies on this axis order.
-     */
-    private fun isWGS84(crs: CoordinateReferenceSystem?): Boolean =
+    private fun readAndValidateMetadata(): Metadata =
+        withResource { resource ->
+            val sampleDimensions = resource.sampleDimensions
+            if (sampleDimensions.size != EXPECTED_BANDS) {
+                throw IncompatibleTileException(path, "has too many Raster Bands", sampleDimensions.size, EXPECTED_BANDS)
+            }
+            val gridGeometry = resource.gridGeometry
+            // No reprojection is supported, the pixel math in lookupElevation relies on longitude first
+            if (!isLongitudeFirstWGS84(gridGeometry.coordinateReferenceSystem)) {
+                throw IncompatibleTileException(
+                    "Tile ($path) has an incompatible coordinate reference system: " +
+                        "${gridGeometry.coordinateReferenceSystem.name}. Expected: WGS 84",
+                )
+            }
+            // Reading a single pixel is enough to determine the data type of the band
+            val firstPixel = GridExtent(null, longArrayOf(0, 0), longArrayOf(0, 0), true)
+            val dataType = readRasterCovering(resource, firstPixel).dataType
+            if (dataType != DataBuffer.TYPE_SHORT) {
+                throw IncompatibleTileException(path, "has an incompatible data type on Band 1", dataType, DataBuffer.TYPE_SHORT)
+            }
+            val gridToCRS =
+                gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER) as? LinearTransform
+                    ?: throw IncompatibleTileException("Tile ($path) has a non linear grid to CRS transformation")
+            val matrix = gridToCRS.matrix
+            if (matrix.getElement(0, 1) != 0.0 || matrix.getElement(1, 0) != 0.0) {
+                throw IncompatibleTileException("Tile ($path) is rotated, only north up rasters are supported")
+            }
+            val grid =
+                PixelGrid(
+                    width = Math.toIntExact(gridGeometry.extent.getSize(0)),
+                    height = Math.toIntExact(gridGeometry.extent.getSize(1)),
+                    originX = matrix.getElement(0, 2),
+                    originY = matrix.getElement(1, 2),
+                    pixelSizeX = matrix.getElement(0, 0),
+                    pixelSizeY = matrix.getElement(1, 1),
+                )
+            // Apache SIS exposes the GDAL_NODATA value as background of the sample dimension
+            val noDataValue =
+                sampleDimensions[0]
+                    .background
+                    .map { it.toShort() }
+                    .orElse(null)
+            Metadata(grid, noDataValue)
+        }
+
+    private fun isLongitudeFirstWGS84(crs: CoordinateReferenceSystem?): Boolean =
         crs != null && Utilities.equalsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), crs)
 
-    /**
-     * Read the given pixel window, row by row
-     */
-    private fun readWindow(
+    private fun readPixelWindow(
         x: Int,
         y: Int,
         windowWidth: Int,
@@ -215,7 +194,7 @@ class GeoTiffTile(
                     longArrayOf((x + windowWidth - 1).toLong(), (y + windowHeight - 1).toLong()),
                     true,
                 )
-            val raster = readRaster(resource, extent)
+            val raster = readRasterCovering(resource, extent)
             Array(windowHeight) { row ->
                 val line = ShortArray(windowWidth)
                 raster.data.getDataElements(raster.offsetX, raster.offsetY + row, windowWidth, 1, line)
@@ -223,12 +202,7 @@ class GeoTiffTile(
             }
         }
 
-    /**
-     * Read the raster covering at least the given extent.
-     * Apache SIS may read a slightly larger area (aligned to the strips of the file),
-     * the offsets point to the requested area in the returned raster.
-     */
-    private fun readRaster(
+    private fun readRasterCovering(
         resource: GridCoverageResource,
         extent: GridExtent,
     ): WindowRaster {
@@ -238,6 +212,8 @@ class GeoTiffTile(
                 .subgrid(extent)
                 .build()
         val coverage = resource.read(subGrid).forConvertedValues(false)
+        // Apache SIS may read a slightly larger area (aligned to the strips of the file),
+        // the offsets point to the requested area in the returned raster
         val readExtent = coverage.gridGeometry.extent
         val image = coverage.render(null)
         val offsetX = image.minX + Math.toIntExact(extent.getLow(0) - readExtent.getLow(0))
@@ -278,12 +254,7 @@ class GeoTiffTile(
         }
 
     private class Metadata(
-        val width: Int,
-        val height: Int,
-        val originX: Double,
-        val originY: Double,
-        val pixelSizeX: Double,
-        val pixelSizeY: Double,
+        val grid: PixelGrid,
         val noDataValue: Short?,
     )
 
