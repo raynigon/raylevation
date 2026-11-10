@@ -20,7 +20,7 @@ import org.springframework.validation.beanvalidation.SpringValidatorAdapter
  * which in turn means that it's not possible to use bean validation.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-abstract class AbstractStandaloneMvcTest<T> {
+abstract class AbstractStandaloneMvcTest<T : Any> {
     private val validator = Validation.buildDefaultValidatorFactory().validator
 
     private val conversionService: FormattingConversionService = DefaultFormattingConversionService()
