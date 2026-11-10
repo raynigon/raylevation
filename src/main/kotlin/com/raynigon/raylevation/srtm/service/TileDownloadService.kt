@@ -1,5 +1,6 @@
 package com.raynigon.raylevation.srtm.service
 
+import com.raynigon.raylevation.srtm.exception.TileDownloadException
 import com.raynigon.raylevation.srtm.model.OriginTile
 import com.raynigon.raylevation.srtm.model.SRTMConfig
 import org.apache.hc.client5.http.classic.methods.HttpGet
@@ -97,7 +98,7 @@ class TileDownloadServiceImpl(
         val response = client.execute(request)
         // Handle response status
         if (response.code != 200) {
-            TODO("raise exception due to incompatible response")
+            throw TileDownloadException(url, response.code)
         }
         // Write Content to Disk
         FileOutputStream(contentPath.toFile()).use { fos ->

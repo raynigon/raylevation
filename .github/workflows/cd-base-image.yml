@@ -1,4 +1,4 @@
-name: "CD - GDAL Base Image"
+name: "CD - Base Image"
 on:
   workflow_dispatch:
   push:
@@ -6,12 +6,10 @@ on:
       - main
     paths:
       - 'Dockerfile'
-  schedule:
-    - cron: "0 1 * * 1-5"
 
 jobs:
   build_and_push:
-    name: "Build and push GDAL Base Image"
+    name: "Build and push Base Image"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -26,4 +24,4 @@ jobs:
         with:
           push: true
           context: .
-          tags: "ghcr.io/raynigon/raylevation-gdal-base:3.11.0"
+          tags: "ghcr.io/raynigon/raylevation-base:21"

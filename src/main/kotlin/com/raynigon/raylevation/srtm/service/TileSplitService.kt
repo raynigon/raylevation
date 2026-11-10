@@ -1,6 +1,6 @@
 package com.raynigon.raylevation.srtm.service
 
-import com.raynigon.raylevation.db.gdal.GDALTile
+import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.db.tile.TileBounds
 import com.raynigon.raylevation.srtm.model.OriginTile
 import org.springframework.stereotype.Service
@@ -18,7 +18,7 @@ interface TileSplitService {
      */
     fun split(
         tile: OriginTile,
-        callback: (GDALTile, OriginTile) -> Unit,
+        callback: (GeoTiffTile, OriginTile) -> Unit,
     )
 }
 
@@ -29,10 +29,10 @@ interface TileSplitService {
 class TileSplitServiceImpl : TileSplitService {
     override fun split(
         tile: OriginTile,
-        callback: (GDALTile, OriginTile) -> Unit,
+        callback: (GeoTiffTile, OriginTile) -> Unit,
     ) {
-        val gdalTile = GDALTile(tile.geoTiffPath!!)
-        val bounds = gdalTile.bounds
+        val sourceTile = GeoTiffTile(tile.geoTiffPath!!)
+        val bounds = sourceTile.bounds
         val cx = (bounds.xMax - bounds.xMin) / tile.splitX
         val cy = (bounds.yMax - bounds.yMin) / tile.splitY
         for (y in 1..tile.splitY) {
@@ -42,7 +42,7 @@ class TileSplitServiceImpl : TileSplitService {
                 val y1 = bounds.yMin + cy * (y - 1)
                 val y2 = bounds.yMax - cy * (tile.splitY - y)
                 val subBounds = TileBounds(y2, x1, y1, x2)
-                val subTile = gdalTile.subTile(subBounds)
+                val subTile = sourceTile.subTile(subBounds)
                 callback(subTile, tile)
                 // Delete SubTile after if was added to the database
                 Files.delete(subTile.path)

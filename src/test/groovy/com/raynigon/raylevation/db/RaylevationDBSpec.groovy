@@ -5,7 +5,7 @@ import static com.raynigon.unit.api.core.units.si.SISystemUnitsConstants.Metre
 import tools.jackson.databind.ObjectMapper
 import com.raynigon.raylevation.db.config.DatabaseConfig
 import com.raynigon.raylevation.db.exception.TileNotFoundException
-import com.raynigon.raylevation.db.gdal.GDALTile
+import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.db.tile.IRaylevationTile
 import com.raynigon.raylevation.db.tile.RaylevationTile
 import com.raynigon.raylevation.db.tile.TileBounds
@@ -14,7 +14,6 @@ import com.raynigon.raylevation.infrastructure.configuration.JacksonConfiguratio
 import com.raynigon.raylevation.infrastructure.model.GeoPoint
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import kotlin.NotImplementedError
-import org.gdal.gdal.gdal
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -28,9 +27,6 @@ class RaylevationDBSpec extends Specification {
 
     ObjectMapper mapper = new JacksonConfiguration().objectMapper()
 
-    def setup() {
-        gdal.AllRegister()
-    }
 
     def "open database without tiles"() {
         given:
@@ -320,7 +316,7 @@ class RaylevationDBSpec extends Specification {
         database.open(true)
 
         and:
-        GDALTile tile = new GDALTile(Path.of("src/test/resources/geotiff/60.010_54.008_-9.008_1.491.tif"))
+        GeoTiffTile tile = new GeoTiffTile(Path.of("src/test/resources/geotiff/60.010_54.008_-9.008_1.491.tif"))
 
         expect:
         Files.exists(config.path.resolve("lock.json"))
@@ -369,7 +365,7 @@ class RaylevationDBSpec extends Specification {
         database.open(false)
 
         and:
-        GDALTile tile = new GDALTile(Path.of("src/test/resources/geotiff/60.010_54.008_-9.008_1.491.tif"))
+        GeoTiffTile tile = new GeoTiffTile(Path.of("src/test/resources/geotiff/60.010_54.008_-9.008_1.491.tif"))
 
         when:
         database.addTile(tile)
@@ -388,7 +384,7 @@ class RaylevationDBSpec extends Specification {
         database.open(true)
 
         and:
-        GDALTile tile = new GDALTile(Path.of("src/test/resources/geotiff/60.010_54.008_-9.008_1.491.tif"))
+        GeoTiffTile tile = new GeoTiffTile(Path.of("src/test/resources/geotiff/60.010_54.008_-9.008_1.491.tif"))
 
         when:
         Files.delete(config.path.resolve("tiles"))

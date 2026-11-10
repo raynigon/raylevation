@@ -19,7 +19,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
       - name: Build base image
         run: |
-          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.11.0 .
+          docker build -t raylevation-base:release .
       - id: vars
         name: "Determine Tag Name"
         run: |
@@ -34,7 +34,7 @@ jobs:
           git config --global user.name "raynigon[bot]"
           git checkout -b release
       - name: "Publish Artifacts"
-        run: "./gradlew :release -Prelease.useAutomaticVersion=true -x check"
+        run: "./gradlew :release -Prelease.useAutomaticVersion=true -x check -Djib.from.image=docker://raylevation-base:release"
         env:
           GITHUB_USERNAME: raynigon
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URI
 import java.time.OffsetDateTime
 
 plugins {
@@ -54,12 +53,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven {
-        url = URI.create("https://repo.osgeo.org/repository/release/")
-        content {
-            includeGroup("org.gdal")
-        }
-    }
 }
 
 dependencies {
@@ -85,7 +78,7 @@ dependencies {
     implementation("com.raynigon.spring-boot:ecs-logging-async:4.0.1")
 
     // Helpers
-    implementation("org.gdal:gdal:3.11.0")
+    implementation("org.apache.sis.storage:sis-geotiff:1.7")
     implementation("com.github.davidmoten:rtree:0.12")
     implementation("com.github.davidmoten:geo:0.8.1")
     implementation("tools.jackson.module:jackson-module-kotlin")
@@ -122,6 +115,24 @@ dependencyManagement {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.4")
         mavenBom("org.springframework.cloud:spring-cloud-contract-dependencies:5.0.3")
     }
+}
+
+// Smoke tests hit real external services (production tile download host, open-elevation.com).
+// They are intentionally kept out of `test`/`check` and are only run via `./gradlew smokeTest`.
+sourceSets {
+    create("smokeTest") {
+        groovy.srcDir("src/smokeTest/groovy")
+        resources.srcDir("src/smokeTest/resources")
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+val smokeTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations["testImplementation"])
+}
+configurations.getByName("smokeTestRuntimeOnly") {
+    extendsFrom(configurations["testRuntimeOnly"])
 }
 
 allOpen {
@@ -171,17 +182,34 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
 
-        testClassesDirs +=
-            sourceSets.contractTest
-                .get()
-                .output
-                .classesDirs
-        classpath +=
-            sourceSets.contractTest
-                .get()
-                .runtimeClasspath
+        if (name == "test") {
+            testClassesDirs +=
+                sourceSets.contractTest
+                    .get()
+                    .output
+                    .classesDirs
+            classpath +=
+                sourceSets.contractTest
+                    .get()
+                    .runtimeClasspath
 
-        finalizedBy(withType<JacocoReport>()) // report is always generated after tests run
+            finalizedBy(withType<JacocoReport>()) // report is always generated after tests run
+        }
+    }
+    register<Test>("smokeTest") {
+        description = "Runs smoke tests against real external services (network, slow, not part of `test`/`check`)."
+        group = "verification"
+        testClassesDirs = sourceSets["smokeTest"].output.classesDirs
+        classpath = sourceSets["smokeTest"].runtimeClasspath
+        // Apache SIS 1.7 violates one of its own internal assertions (lock ownership in
+        // ImageFileDirectory.getSampleModel) on the direct read path, disable assertions for SIS only.
+        // Same reason this is disabled for the `test` task in gradle/scripts/test.gradle
+        jvmArgs("-da:org.apache.sis...")
+        outputs.upToDateWhen { false } // always re-run; it's about hitting the real endpoints
+        // Optional override of app.raylevation.srtm.url in Spring's env format (GitHub secret in CI),
+        // forward it explicitly from the Gradle process' environment into the forked test JVM.
+        // Without it, the default from application.yml is used.
+        System.getenv("APP_RAYLEVATION_SRTM_URL")?.takeIf { it.isNotBlank() }?.let { environment("APP_RAYLEVATION_SRTM_URL", it) }
     }
     withType<KotlinCompile> {
         compilerOptions {
@@ -208,7 +236,7 @@ tasks {
 jib {
     val commitHash: String = System.getenv("COMMIT_HASH") ?: "unknown_commit"
     from {
-        image = "ghcr.io/raynigon/raylevation-gdal-base:3.11.0"
+        image = "ghcr.io/raynigon/raylevation-base:21"
         auth {
             username = System.getenv("REGISTRY_USER")
             password = System.getenv("REGISTRY_PASSWORD")
