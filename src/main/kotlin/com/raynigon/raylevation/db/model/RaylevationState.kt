@@ -1,5 +1,6 @@
 package com.raynigon.raylevation.db.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
@@ -8,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
  */
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
     property = "version",
 )
 @JsonSubTypes(
@@ -35,5 +36,7 @@ class RaylevationState1d0d0(
     override val metadata: Map<String, Any>,
     override val tiles: List<RaylevationStateTile>,
 ) : IRaylevationState {
+    // Written by the bean itself and used as type id on read (EXISTING_PROPERTY)
+    @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
     val version: String = "1.0.0"
 }

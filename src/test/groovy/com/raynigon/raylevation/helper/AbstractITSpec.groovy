@@ -23,9 +23,10 @@ abstract class AbstractITSpec extends Specification {
 
     def setup() {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory())
-        def converters = restTemplate.getMessageConverters()
-        converters.removeIf { it instanceof JacksonJsonHttpMessageConverter }
-        converters.add(0, new JacksonJsonHttpMessageConverter(new JacksonConfiguration().objectMapper()))
+        def mapper = new JacksonConfiguration().objectMapper()
+        restTemplate.getMessageConverters().replaceAll { conv ->
+            conv instanceof JacksonJsonHttpMessageConverter ? new JacksonJsonHttpMessageConverter(mapper) : conv
+        }
     }
 
     protected int getPort() {
