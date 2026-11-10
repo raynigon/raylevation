@@ -73,8 +73,11 @@ jobs:
           registry: "ghcr.io"
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # Build the GDAL base image from the Dockerfile, so the CI does not depend on the published base image
+      - name: Build GDAL Base Image
+        run: "docker build -t raylevation-gdal-base:ci ."
       - name: Gradle Command - jibDockerBuild
-        run: "./gradlew jibDockerBuild -x check"
+        run: "./gradlew jibDockerBuild -x check -Djib.from.image=docker://raylevation-gdal-base:ci"
       - name: Test Docker Image
         run: ".github/scripts/test-docker-image.sh"
         timeout-minutes: 2

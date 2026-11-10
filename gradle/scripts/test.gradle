@@ -1,6 +1,10 @@
 test {
     useJUnitPlatform()
     jvmArgs "-Djava.library.path=/usr/lib/jni"
+    testLogging {
+        events "failed"
+        exceptionFormat = "full"
+    }
 }
 
 jacoco {

@@ -38,6 +38,6 @@ jobs:
           JAVA_HOME: /usr/lib/jvm/java-21-openjdk-amd64
 
       - name: Pre-warm Gradle dependency cache
-        run: ./gradlew dependencies --configuration compileClasspath --configuration testCompileClasspath --configuration runtimeClasspath
+        run: ./gradlew dependencies
         env:
           JAVA_HOME: /usr/lib/jvm/java-21-openjdk-amd64
