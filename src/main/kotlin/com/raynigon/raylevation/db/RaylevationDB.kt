@@ -4,7 +4,7 @@ import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry.Rectangle
 import com.raynigon.raylevation.db.config.DatabaseConfig
 import com.raynigon.raylevation.db.exception.TileNotFoundException
-import com.raynigon.raylevation.db.gdal.GDALTile
+import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.db.lock.IRaylevationDBLock
 import com.raynigon.raylevation.db.lock.RaylevationDBLock
 import com.raynigon.raylevation.db.lock.isLocked
@@ -63,11 +63,11 @@ interface IRaylevationDB : Closeable {
     fun syncCache()
 
     /**
-     * Add [GDALTile] to the database
+     * Add [GeoTiffTile] to the database
      *
      * @param tile    the tile which should be added
      */
-    fun addTile(tile: GDALTile)
+    fun addTile(tile: GeoTiffTile)
 
     /**
      *  Stores the current state of the database on disk.
@@ -208,7 +208,7 @@ class RaylevationDB(
         logger.debug("Cache Status: $cachedTiles/$totalTiles Tiles   $cachedPercent%")
     }
 
-    override fun addTile(tile: GDALTile) {
+    override fun addTile(tile: GeoTiffTile) {
         if (!lock.isLocked()) {
             TODO("Raise Exception, modification is not allowed without lock")
         }
@@ -226,7 +226,7 @@ class RaylevationDB(
                 bounds.yMin,
                 bounds.xMax,
             )
-        // Copy GDAL Tile to the database directory
+        // Copy GeoTiff Tile to the database directory
         val tilePath = tilesFolder.resolve("$name$GEOTIFF_FILE_SUFFIX")
         tile.saveTo(tilePath)
         RaylevationTile(name, tilePath, bounds, registry).let(::addTile)

@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URI
 import java.time.OffsetDateTime
 
 plugins {
@@ -54,12 +53,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven {
-        url = URI.create("https://repo.osgeo.org/repository/release/")
-        content {
-            includeGroup("org.gdal")
-        }
-    }
 }
 
 dependencies {
@@ -85,7 +78,7 @@ dependencies {
     implementation("com.raynigon.spring-boot:ecs-logging-async:4.0.1")
 
     // Helpers
-    implementation("org.gdal:gdal:3.11.0")
+    implementation("org.apache.sis.storage:sis-geotiff:1.7")
     implementation("com.github.davidmoten:rtree:0.12")
     implementation("com.github.davidmoten:geo:0.8.1")
     implementation("tools.jackson.module:jackson-module-kotlin")
@@ -208,7 +201,7 @@ tasks {
 jib {
     val commitHash: String = System.getenv("COMMIT_HASH") ?: "unknown_commit"
     from {
-        image = "ghcr.io/raynigon/raylevation-gdal-base:3.11.0"
+        image = "ghcr.io/raynigon/raylevation-base:21"
         auth {
             username = System.getenv("REGISTRY_USER")
             password = System.getenv("REGISTRY_PASSWORD")

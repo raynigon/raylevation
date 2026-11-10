@@ -9,20 +9,21 @@ jobs:
   build:
     name: "Test"
     runs-on: ubuntu-latest
-    container: ghcr.io/osgeo/gdal:ubuntu-full-3.11.0
     steps:
       - uses: actions/checkout@v7
-      - name: "Install Dependencies"
+      - uses: actions/setup-java@v5.2.0
+        with:
+          java-version: 21
+          distribution: temurin
+      - name: "Setup gradle"
+        uses: gradle/actions/setup-gradle@v6
+      # unrar is used by the TileUnpackService to extract the SRTM archives
+      - name: "Install unrar"
         run: |
-          rm -f /etc/apt/sources.list.d/*arrow*
-          apt-get update
-          apt-get install -y --no-install-recommends unrar openjdk-21-jdk-headless
-      - name: "Show GDAL JNI location"
-        run: find / -name 'libgdalalljni*' -not -path '/proc/*' 2>/dev/null || true
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends unrar
       - name: Gradle Command - test
         run: "./gradlew clean test"
-        env:
-          JAVA_HOME: /usr/lib/jvm/java-21-openjdk-amd64
       - name: Codacy Publish
         uses: codacy/codacy-coverage-reporter-action@master
         if: github.actor != 'dependabot[bot]'
@@ -75,11 +76,11 @@ jobs:
           registry: "ghcr.io"
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      # Build the GDAL base image from the Dockerfile, so the CI does not depend on the published base image
-      - name: Build GDAL Base Image
-        run: "docker build -t raylevation-gdal-base:ci ."
+      # Build the base image from the Dockerfile, so the CI does not depend on the published base image
+      - name: Build Base Image
+        run: "docker build -t raylevation-base:ci ."
       - name: Gradle Command - jibDockerBuild
-        run: "./gradlew jibDockerBuild -x check -Djib.from.image=docker://raylevation-gdal-base:ci"
+        run: "./gradlew jibDockerBuild -x check -Djib.from.image=docker://raylevation-base:ci"
       - name: Test Docker Image
         run: ".github/scripts/test-docker-image.sh"
         timeout-minutes: 2

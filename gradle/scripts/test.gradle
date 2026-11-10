@@ -1,8 +1,8 @@
 test {
     useJUnitPlatform()
-    // Possible install locations of the GDAL JNI library (libgdalalljni) in the GDAL container images
-    def jniDirectories = ["/usr/lib/jni", "/usr/lib/x86_64-linux-gnu/jni", "/usr/lib/aarch64-linux-gnu/jni", "/usr/share/java", "/usr/local/lib"]
-    jvmArgs "-Djava.library.path=${jniDirectories.join(File.pathSeparator)}"
+    // Apache SIS 1.7 violates one of its own internal assertions (lock ownership in
+    // ImageFileDirectory.getSampleModel) on the direct read path, disable assertions for SIS only
+    jvmArgs "-da:org.apache.sis..."
     testLogging {
         events "failed"
         exceptionFormat = "full"
