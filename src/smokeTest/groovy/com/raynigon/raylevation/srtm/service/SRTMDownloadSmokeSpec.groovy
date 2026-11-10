@@ -4,7 +4,6 @@ import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.db.tile.TileBounds
 import com.raynigon.raylevation.infrastructure.model.GeoPoint
 import com.raynigon.raylevation.srtm.model.OriginTile
-import com.raynigon.raylevation.srtm.model.OriginTileConfig
 import com.raynigon.raylevation.srtm.model.SRTMConfig
 import groovy.json.JsonSlurper
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean
@@ -14,8 +13,6 @@ import org.springframework.core.io.ClassPathResource
 import spock.lang.Specification
 import spock.lang.Timeout
 
-import java.net.URI
-import java.net.URLEncoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -61,7 +58,7 @@ class SRTMDownloadSmokeSpec extends Specification {
     TileUnpackService unpackService = new TileUnpackServiceImpl(config)
 
     @Timeout(value = 600, unit = TimeUnit.SECONDS)
-    def "#tileName downloads, unpacks and matches open-elevation.com within tolerance"() {
+    def "tile #tileName downloads, unpacks and matches open-elevation.com within tolerance"() {
         given:
         Files.createDirectories(config.workspace)
         Path tileDir = config.workspace.resolve(tileName)
@@ -135,8 +132,8 @@ class SRTMDownloadSmokeSpec extends Specification {
 
     private static String resolveSmokeTestUrl() {
         YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean()
-        yaml.setResources(new ClassPathResource("application.yml"))
-        Properties defaults = yaml.getObject()
+        yaml.resources = new ClassPathResource("application.yml")
+        Properties defaults = yaml.object
 
         // StandardEnvironment maps app.raylevation.srtm.url to APP_RAYLEVATION_SRTM_URL,
         // system properties and environment variables take precedence over application.yml
