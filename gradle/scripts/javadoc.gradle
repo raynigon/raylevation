@@ -1,10 +1,10 @@
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     from sourceSets.main.allSource
     archiveClassifier.set('sources')
 }
 
-task javadocJar(type: Jar) {
+tasks.register('javadocJar', Jar) {
     dependsOn tasks.named('dokkaGenerateHtml')
-    from "$buildDir/dokka/html"
+    from layout.buildDirectory.dir("dokka/html")
     archiveClassifier.set('javadoc')
 }

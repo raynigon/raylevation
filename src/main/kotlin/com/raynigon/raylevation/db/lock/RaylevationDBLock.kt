@@ -1,7 +1,7 @@
 package com.raynigon.raylevation.db.lock
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.ObjectMapper
 import java.lang.Thread.sleep
 import java.nio.file.Files
 import java.nio.file.Path

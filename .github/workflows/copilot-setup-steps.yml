@@ -26,6 +26,7 @@ jobs:
 
       - name: Install Java 21 and unrar
         run: |
+          rm -f /etc/apt/sources.list.d/*arrow*
           apt-get update
           apt-get install -y --no-install-recommends openjdk-21-jdk-headless unrar
 

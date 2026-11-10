@@ -1,6 +1,6 @@
 package com.raynigon.raylevation.base.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import com.raynigon.raylevation.db.config.DatabaseConfig
 import com.raynigon.raylevation.infrastructure.configuration.JacksonConfiguration
 import io.micrometer.core.instrument.MeterRegistry

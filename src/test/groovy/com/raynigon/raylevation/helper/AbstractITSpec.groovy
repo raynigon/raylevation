@@ -5,7 +5,7 @@ import com.raynigon.raylevation.infrastructure.configuration.JacksonConfiguratio
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
@@ -23,11 +23,9 @@ abstract class AbstractITSpec extends Specification {
 
     def setup() {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory())
-        restTemplate.getMessageConverters().forEach { conv ->
-            if (conv instanceof MappingJackson2HttpMessageConverter) {
-                conv.objectMapper = new JacksonConfiguration().objectMapper()
-            }
-        }
+        def converters = restTemplate.getMessageConverters()
+        converters.removeIf { it instanceof JacksonJsonHttpMessageConverter }
+        converters.add(0, new JacksonJsonHttpMessageConverter(new JacksonConfiguration().objectMapper()))
     }
 
     protected int getPort() {

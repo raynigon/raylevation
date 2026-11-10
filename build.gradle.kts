@@ -91,15 +91,14 @@ dependencies {
     implementation("org.gdal:gdal:3.11.0")
     implementation("com.github.davidmoten:rtree:0.12")
     implementation("com.github.davidmoten:geo:0.8.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
 
     // Spock
     testImplementation("org.apache.groovy:groovy:5.0.5")
-    testImplementation(platform("org.spockframework:spock-bom:2.4-M6-groovy-4.0"))
+    testImplementation(platform("org.spockframework:spock-bom:2.4-groovy-5.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-spring")
 

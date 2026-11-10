@@ -81,7 +81,7 @@ class RaylevationTile(
                 Tag.of("longitude", bounds.center.longitude.toString()),
             ),
             AtomicInteger(0),
-        ) ?: error("Unable to initialize cached metric")
+        )
 
     override val lookups: Long get() = lookupCounter.sum()
 
