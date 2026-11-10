@@ -2,6 +2,7 @@ package com.raynigon.raylevation.srtm.service
 
 import com.raynigon.raylevation.base.service.RaylevationDBFactory
 import com.raynigon.raylevation.db.IRaylevationDB
+import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.srtm.model.OriginTile
 import com.raynigon.raylevation.srtm.model.SRTMConfig
 import org.slf4j.LoggerFactory
@@ -51,9 +52,8 @@ class SRTMServiceImpl(
             if (isUpToDate(originTile, tileState)) {
                 logger.info("${originTile.name} is up to date and does not need an update")
                 continue
-            } else if (tileState.contains(originTile)) {
-                TODO("Origin Tile changed, tile updates are not yet implemented")
             }
+            val previousState = tileState.getState(originTile)
             logger.debug("Start processing for tile ${originTile.name}")
             var tile = originTile
             val tileDir = createTileDirectory(tile, workspace)
@@ -64,11 +64,16 @@ class SRTMServiceImpl(
             // Unpack Tile
             tile = unpackService.unpackArchive(tile, tileDir)
             logger.debug("Unpacked tile to ${tile.geoTiffPath}")
+            // Remove sub tiles from a previous version of this origin tile, if any
+            if (previousState != null) {
+                removeOldSubTiles(tile, previousState, database)
+            }
             // Split Tile
-            splitService.split(tile) { subTile, _ -> database.addTile(subTile) }
-            logger.debug("Add subTiles to database for origin ${tile.name}")
+            val subTileNames = mutableListOf<String>()
+            splitService.split(tile) { subTile, _ -> subTileNames.add(database.addTile(subTile)) }
+            logger.debug("Added ${subTileNames.size} subTiles to database for origin ${tile.name}")
             // Update Metadata
-            tileState = tileState.updateTile(tile)
+            tileState = tileState.updateTile(tile, subTileNames)
             database.setMetadata(METADATA_KEY_TILES, tileState)
             // Save Database
             database.save()
@@ -85,10 +90,28 @@ class SRTMServiceImpl(
         tile: OriginTile,
         tileState: OriginTilesState,
     ): Boolean {
-        if (!tileState.contains(tile)) return false
-        val stateETag = tileState.getETag(tile)
-        val remoteETag = downloadService.fetchETag(tile)
-        return stateETag == remoteETag
+        val state = tileState.getState(tile) ?: return false
+        if (state.etag != downloadService.fetchETag(tile)) return false
+        return state.splitX == tile.splitX && state.splitY == tile.splitY
+    }
+
+    private fun removeOldSubTiles(
+        tile: OriginTile,
+        previous: OriginTileState,
+        database: IRaylevationDB,
+    ) {
+        val staleNames =
+            previous.subTiles.ifEmpty {
+                logger.warn(
+                    "Origin tile ${tile.name} has no recorded sub tiles (legacy metadata), " +
+                        "falling back to a bounds lookup",
+                )
+                database.findTileNames(GeoTiffTile(tile.geoTiffPath!!).bounds)
+            }
+        if (staleNames.isEmpty()) {
+            logger.warn("No existing sub tiles found for origin tile ${tile.name}, nothing to remove")
+        }
+        staleNames.forEach(database::removeTile)
     }
 
     private fun createTileDirectory(
@@ -110,36 +133,40 @@ data class OriginTilesState(
     /**
      * Create or update the given origin tile.
      *
-     * @param tile    The [OriginTile] to create or update
+     * @param tile        The [OriginTile] to create or update
+     * @param subTiles    The names of the database tiles which were created for this [OriginTile]
      * @return The new [OriginTileState] containing the updated [OriginTile]
      */
-    fun updateTile(tile: OriginTile): OriginTilesState {
+    fun updateTile(
+        tile: OriginTile,
+        subTiles: List<String>,
+    ): OriginTilesState {
         val newTiles = tiles.filter { it.name != tile.name }.toMutableList()
-        newTiles.add(OriginTileState(tile.name, tile.etag))
+        newTiles.add(OriginTileState(tile.name, tile.etag, tile.splitX, tile.splitY, subTiles))
         return OriginTilesState(newTiles.toList())
     }
 
     /**
-     *  Checks if a given [OriginTile] is present
+     *  Returns the stored state for a given [OriginTile]
      *
-     *  @param tile    The [OriginTile] which should be checked
-     *  @return True if the tile exists, false if not
+     *  @param tile    The [OriginTile] for which the state should be queried
+     *  @return The [OriginTileState] of the given [OriginTile] or null if no state was found
      */
-    fun contains(tile: OriginTile): Boolean = tiles.any { it.name == tile.name }
-
-    /**
-     *  Returns the E-Tag for a given [OriginTile]
-     *
-     *  @param tile    The [OriginTile] for which the E-Tag should be queried
-     *  @return The E-Tag of the given [OriginTile] or null if no E-Tag was found
-     */
-    fun getETag(tile: OriginTile): String? = tiles.filter { it.name == tile.name }.map { it.etag }.firstOrNull()
+    fun getState(tile: OriginTile): OriginTileState? = tiles.firstOrNull { it.name == tile.name }
 }
 
 /**
  * Temporary container for the setup of the SRTM tiles
+ *
+ * @param splitX      The horizontal split count used to create [subTiles], 0 if unknown (legacy metadata)
+ * @param splitY      The vertical split count used to create [subTiles], 0 if unknown (legacy metadata)
+ * @param subTiles    The names of the database tiles which were created for this origin tile,
+ *                     empty if unknown (legacy metadata)
  */
 data class OriginTileState(
     val name: String,
     val etag: String,
+    val splitX: Int = 0,
+    val splitY: Int = 0,
+    val subTiles: List<String> = emptyList(),
 )

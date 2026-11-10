@@ -18,6 +18,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.attribute.FileTime
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -103,6 +104,41 @@ class SRTMDownloadSmokeSpec extends Specification {
         "SRTM_NE_250m" | 20     | 10
         "SRTM_SE_250m" | 20     | 10
         "SRTM_W_250m"  | 20     | 20
+    }
+
+    @Timeout(value = 300, unit = TimeUnit.SECONDS)
+    def "downloading the same tile twice reuses the local archive when the E-Tag is unchanged"() {
+        given: "a dedicated directory, isolated from the parameterized test above"
+        String tileName = "SRTM_NE_250m"
+        Files.createDirectories(config.workspace)
+        Path tileDir = config.workspace.resolve("${tileName}-duplicate-etag-check")
+        Files.createDirectories(tileDir)
+        OriginTile originTile = new OriginTile(tileName, 1, 1, "-", null, null, null)
+
+        when: "the real production archive is downloaded for the first time"
+        OriginTile first = downloadService.downloadTile(originTile, tileDir)
+        FileTime firstModifiedTime = Files.getLastModifiedTime(first.archivePath)
+
+        then: "the download succeeded and an E-Tag was recorded"
+        first.archivePath.toFile().exists()
+        first.etag != null
+
+        when: "the same tile is downloaded again into the same directory"
+        OriginTile second = downloadService.downloadTile(originTile, tileDir)
+
+        then: "the real SRTM host returns the same E-Tag, so the local archive file is never rewritten"
+        second.etag == first.etag
+        Files.size(second.archivePath) == Files.size(first.archivePath)
+        Files.getLastModifiedTime(second.archivePath) == firstModifiedTime
+
+        when: "the reused archive is unpacked"
+        OriginTile unpacked = unpackService.unpackArchive(second, tileDir)
+        GeoTiffTile tile = new GeoTiffTile(unpacked.geoTiffPath)
+
+        then: "it is still a valid, readable GeoTiff"
+        TileBounds bounds = tile.bounds
+        bounds.xMin < bounds.xMax
+        bounds.yMin < bounds.yMax
     }
 
     private static GeoTiffTile randomSubTile(GeoTiffTile tile, TileBounds bounds, int splitX, int splitY, String tileName) {
