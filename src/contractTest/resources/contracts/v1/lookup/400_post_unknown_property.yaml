@@ -1,0 +1,16 @@
+name: Get elevation for location with an unknown property next to locations
+request:
+  url: /api/v1/lookup
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    locations: []
+    unknown: "property"
+response:
+  status: 400
+  headers:
+    Content-Type: application/json
+  body:
+    status: 400 BAD_REQUEST
+    message: InvalidBody
