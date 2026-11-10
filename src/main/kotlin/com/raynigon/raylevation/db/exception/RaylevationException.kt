@@ -61,3 +61,10 @@ class InvalidSubTileException(
     val bounds: TileBounds,
     val requested: TileBounds,
 ) : RaylevationException("Tile ($path) with bounds $bounds does not cover the requested area $requested")
+
+/**
+ * If a modification to the database is attempted while it is not locked, this exception is thrown
+ */
+data class DatabaseNotLockedException(
+    val operation: String,
+) : RaylevationException("Database modification via '$operation' is not allowed without a lock")

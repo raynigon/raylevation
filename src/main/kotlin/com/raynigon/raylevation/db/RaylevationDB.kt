@@ -3,6 +3,7 @@ package com.raynigon.raylevation.db
 import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry.Rectangle
 import com.raynigon.raylevation.db.config.DatabaseConfig
+import com.raynigon.raylevation.db.exception.DatabaseNotLockedException
 import com.raynigon.raylevation.db.exception.TileNotFoundException
 import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.db.lock.IRaylevationDBLock
@@ -14,6 +15,7 @@ import com.raynigon.raylevation.db.model.RaylevationStateTile
 import com.raynigon.raylevation.db.model.emptyRaylevationState
 import com.raynigon.raylevation.db.tile.IRaylevationTile
 import com.raynigon.raylevation.db.tile.RaylevationTile
+import com.raynigon.raylevation.db.tile.TileBounds
 import com.raynigon.raylevation.infrastructure.kotlin.toPointDouble
 import com.raynigon.raylevation.infrastructure.kotlin.toRectangle
 import com.raynigon.raylevation.infrastructure.model.GeoPoint
@@ -66,8 +68,25 @@ interface IRaylevationDB : Closeable {
      * Add [GeoTiffTile] to the database
      *
      * @param tile    the tile which should be added
+     * @return the name under which the tile was added to the database
      */
-    fun addTile(tile: GeoTiffTile)
+    fun addTile(tile: GeoTiffTile): String
+
+    /**
+     * Remove the tile with the given name from the database.
+     * Does nothing if no tile with the given name exists.
+     *
+     * @param name    the name of the tile which should be removed
+     */
+    fun removeTile(name: String)
+
+    /**
+     * Find the names of all tiles in the database whose bounds are fully contained in the given bounds.
+     *
+     * @param bounds    the bounds in which tiles should be looked up
+     * @return the names of the matching tiles
+     */
+    fun findTileNames(bounds: TileBounds): List<String>
 
     /**
      *  Stores the current state of the database on disk.
@@ -208,9 +227,9 @@ class RaylevationDB(
         logger.debug("Cache Status: $cachedTiles/$totalTiles Tiles   $cachedPercent%")
     }
 
-    override fun addTile(tile: GeoTiffTile) {
+    override fun addTile(tile: GeoTiffTile): String {
         if (!lock.isLocked()) {
-            TODO("Raise Exception, modification is not allowed without lock")
+            throw DatabaseNotLockedException("addTile")
         }
         lock!!.update()
         val tilesFolder = config.path.resolve(TILES_FOLDER_NAME)
@@ -231,7 +250,28 @@ class RaylevationDB(
         tile.saveTo(tilePath)
         RaylevationTile(name, tilePath, bounds, registry).let(::addTile)
         logger.info("Added Tile $name to database")
+        return name
     }
+
+    @Synchronized
+    override fun removeTile(name: String) {
+        if (!lock.isLocked()) {
+            throw DatabaseNotLockedException("removeTile")
+        }
+        lock!!.update()
+        val tile = tiles.firstOrNull { it.name == name }
+        if (tile == null) {
+            logger.warn("Tile $name does not exist in database, skipping removal")
+            return
+        }
+        tiles = tiles.filterNot { it.name == name }.toSet()
+        index = index.delete(tile, tile.toRectangle())
+        totalTilesGauge.set(tiles.size)
+        Files.deleteIfExists(tile.path)
+        logger.info("Removed Tile $name from database")
+    }
+
+    override fun findTileNames(bounds: TileBounds): List<String> = tiles.filter { bounds.contains(it.bounds) }.map { it.name }
 
     override fun <T> getMetadata(
         name: String,
@@ -252,7 +292,7 @@ class RaylevationDB(
     @Synchronized
     override fun save() {
         if (!lock.isLocked()) {
-            TODO("Raise Exception, modification is not allowed without lock")
+            throw DatabaseNotLockedException("save")
         }
         lock!!.update()
         val indexPath = config.path.resolve(STATE_FILE_NAME)
@@ -278,8 +318,8 @@ class RaylevationDB(
 
     @Synchronized
     private fun addTile(tile: IRaylevationTile) {
-        if (tiles.contains(tile)) {
-            throw IllegalArgumentException("Tile $tile already exists")
+        if (tiles.any { it.name == tile.name }) {
+            throw IllegalArgumentException("Tile ${tile.name} already exists")
         }
         // Create new index, because the index is immutable, therefore we need to create a new one on every change
         val newTiles = tiles.toMutableSet()

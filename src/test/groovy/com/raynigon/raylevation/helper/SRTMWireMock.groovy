@@ -27,6 +27,17 @@ class SRTMWireMock extends AbstractWireMockInitializer {
                                         .withBody(ceaRar)
                         )
         )
+        // HEAD stub mirroring the ETag of the GET stub above, used to verify that a second
+        // download with an unchanged E-Tag does not re-download the archive.
+        wireMock.register(
+                WireMock.head(WireMock.urlPathEqualTo("/srtm/download/cea.rar"))
+                        .atPriority(1)
+                        .willReturn(
+                                WireMock.aResponse()
+                                        .withStatus(200)
+                                        .withHeader(HttpHeaders.ETAG, "1234567890")
+                        )
+        )
         wireMock.register(
                 WireMock.get(WireMock.urlPathEqualTo("/srtm/download/cea-no-etag.rar"))
                         .atPriority(1)
