@@ -1,6 +1,7 @@
 package com.raynigon.raylevation.srtm.service
 
 import com.raynigon.raylevation.infrastructure.process.ProcessLogger
+import com.raynigon.raylevation.srtm.exception.TileUnpackException
 import com.raynigon.raylevation.srtm.model.OriginTile
 import com.raynigon.raylevation.srtm.model.SRTMConfig
 import org.slf4j.LoggerFactory
@@ -53,8 +54,9 @@ class TileUnpackServiceImpl(
                 .command("unrar", "e", tile.archivePath!!.toAbsolutePath().toString())
                 .start()
         ProcessLogger(process, logger, "UNRAR: ")
-        if (process.waitFor() != 0) {
-            TODO("Raise exception, unrar failed")
+        val exitCode = process.waitFor()
+        if (exitCode != 0) {
+            throw TileUnpackException(tile.archivePath, exitCode)
         }
         val geoTiff = findGeoTiff(target) ?: error("No GeoTiff in archive")
         return if (!config.saveDiskSpace) {

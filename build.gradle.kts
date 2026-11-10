@@ -117,6 +117,24 @@ dependencyManagement {
     }
 }
 
+// Smoke tests hit real external services (production tile download host, open-elevation.com).
+// They are intentionally kept out of `test`/`check` and are only run via `./gradlew smokeTest`.
+sourceSets {
+    create("smokeTest") {
+        groovy.srcDir("src/smokeTest/groovy")
+        resources.srcDir("src/smokeTest/resources")
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+val smokeTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations["testImplementation"])
+}
+configurations.getByName("smokeTestRuntimeOnly") {
+    extendsFrom(configurations["testRuntimeOnly"])
+}
+
 allOpen {
     annotation("org.springframework.stereotype.Service")
     annotation("javax.persistence.Entity")
@@ -164,17 +182,34 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
 
-        testClassesDirs +=
-            sourceSets.contractTest
-                .get()
-                .output
-                .classesDirs
-        classpath +=
-            sourceSets.contractTest
-                .get()
-                .runtimeClasspath
+        if (name == "test") {
+            testClassesDirs +=
+                sourceSets.contractTest
+                    .get()
+                    .output
+                    .classesDirs
+            classpath +=
+                sourceSets.contractTest
+                    .get()
+                    .runtimeClasspath
 
-        finalizedBy(withType<JacocoReport>()) // report is always generated after tests run
+            finalizedBy(withType<JacocoReport>()) // report is always generated after tests run
+        }
+    }
+    register<Test>("smokeTest") {
+        description = "Runs smoke tests against real external services (network, slow, not part of `test`/`check`)."
+        group = "verification"
+        testClassesDirs = sourceSets["smokeTest"].output.classesDirs
+        classpath = sourceSets["smokeTest"].runtimeClasspath
+        // Apache SIS 1.7 violates one of its own internal assertions (lock ownership in
+        // ImageFileDirectory.getSampleModel) on the direct read path, disable assertions for SIS only.
+        // Same reason this is disabled for the `test` task in gradle/scripts/test.gradle
+        jvmArgs("-da:org.apache.sis...")
+        outputs.upToDateWhen { false } // always re-run; it's about hitting the real endpoints
+        // Optional override of app.raylevation.srtm.url in Spring's env format (GitHub secret in CI),
+        // forward it explicitly from the Gradle process' environment into the forked test JVM.
+        // Without it, the default from application.yml is used.
+        System.getenv("APP_RAYLEVATION_SRTM_URL")?.takeIf { it.isNotBlank() }?.let { environment("APP_RAYLEVATION_SRTM_URL", it) }
     }
     withType<KotlinCompile> {
         compilerOptions {
