@@ -95,7 +95,7 @@ internal object GeoTiffWriter {
         val rowSize = grid.width * BYTES_PER_SAMPLE
         val stripOffsets = Entry.longs(TAG_STRIP_OFFSETS, IntArray(grid.height))
         val entries = createEntries(grid, noData, stripOffsets)
-        val pixelOffset = assignValueOffsets(entries)
+        val pixelOffset = assignValueOffsetsAndGetPixelOffset(entries)
         // The size of the strip offsets entry does not depend on its values, so it can be filled after the layout
         stripOffsets.data = Entry.longs(TAG_STRIP_OFFSETS, IntArray(grid.height) { pixelOffset + it * rowSize }).data
 
@@ -132,12 +132,8 @@ internal object GeoTiffWriter {
         return entries
     }
 
-    /**
-     * Layout: header | IFD | values which do not fit into an entry | pixel data
-     *
-     * @return the offset of the pixel data
-     */
-    private fun assignValueOffsets(entries: List<Entry>): Int {
+    private fun assignValueOffsetsAndGetPixelOffset(entries: List<Entry>): Int {
+        // Layout: header | IFD | values which do not fit into an entry | pixel data
         var offset = HEADER_SIZE + 2 + entries.size * ENTRY_SIZE + 4
         for (entry in entries.filter { it.data.size > INLINE_VALUE_SIZE }) {
             entry.valueOffset = offset
