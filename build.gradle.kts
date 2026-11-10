@@ -71,6 +71,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    // Required at runtime by ecs-logging-access (RestClientCustomizer)
+    implementation("org.springframework.boot:spring-boot-restclient")
 
     // unit-api
     implementation("com.raynigon.unit-api:spring-boot-jackson-starter:4.0.1")
