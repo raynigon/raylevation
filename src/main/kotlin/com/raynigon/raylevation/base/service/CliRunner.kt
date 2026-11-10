@@ -17,7 +17,7 @@ interface CliRunner : CommandLineRunner {
      *
      * @param args    All command line arguments passed on process start
      */
-    override fun run(vararg args: String?)
+    override fun run(vararg args: String)
 
     /**
      * Exit the process and provide an error message,
@@ -41,7 +41,7 @@ class CliRunnerImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun run(vararg args: String?) {
+    override fun run(vararg args: String) {
         val cmd = args.firstOrNull() ?: System.getenv(CLI_CMD_ENV_NAME)
         if (cmd.isNullOrEmpty()) return
         try {

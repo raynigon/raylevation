@@ -1,8 +1,6 @@
 
 signing {
-    required {
-        findProperty("signingKey") != null
-    }
+    required = { findProperty("signingKey") != null }
     String signingKey = findProperty("signingKey")
     String signingPassword = findProperty("signingPassword")
     useInMemoryPgpKeys(signingKey, signingPassword)
@@ -27,8 +25,8 @@ publishing {
 
             artifact project.tasks.jar
             artifact project.tasks.bootJar
-            artifact sourcesJar
-            artifact javadocJar
+            artifact tasks.named('sourcesJar')
+            artifact tasks.named('javadocJar')
 
             pom.withXml {
                 def rootNode = asNode()

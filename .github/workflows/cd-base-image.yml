@@ -1,4 +1,4 @@
-name: "CD - GDAL Base Image"
+name: "CD - Base Image"
 on:
   workflow_dispatch:
   push:
@@ -6,15 +6,13 @@ on:
       - main
     paths:
       - 'Dockerfile'
-  schedule:
-    - cron: "0 1 * * 1-5"
 
 jobs:
   build_and_push:
-    name: "Build and push GDAL Base Image"
+    name: "Build and push Base Image"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Login to DockerHub
         uses: docker/login-action@v4
         with:
@@ -22,8 +20,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push Docker images
-        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           push: true
           context: .
-          tags: "ghcr.io/raynigon/raylevation-gdal-base:3.11.0"
+          tags: "ghcr.io/raynigon/raylevation-base:21"

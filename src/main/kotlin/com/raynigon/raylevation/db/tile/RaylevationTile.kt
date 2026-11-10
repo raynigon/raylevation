@@ -1,7 +1,7 @@
 package com.raynigon.raylevation.db.tile
 
 import com.raynigon.raylevation.db.exception.LookupOutOfBoundsException
-import com.raynigon.raylevation.db.gdal.GDALTile
+import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.infrastructure.model.GeoPoint
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
@@ -60,7 +60,7 @@ class RaylevationTile(
     override val bounds: TileBounds,
     registry: MeterRegistry,
 ) : IRaylevationTile {
-    private var tileCache: GDALTile? = null
+    private var tileCache: GeoTiffTile? = null
     private val lookupCounter = LongAdder()
     private val metricCounter =
         registry.counter(
@@ -81,7 +81,7 @@ class RaylevationTile(
                 Tag.of("longitude", bounds.center.longitude.toString()),
             ),
             AtomicInteger(0),
-        ) ?: error("Unable to initialize cached metric")
+        )
 
     override val lookups: Long get() = lookupCounter.sum()
 
@@ -91,7 +91,7 @@ class RaylevationTile(
         @Synchronized
         set(value) {
             if (value && tileCache == null) {
-                tileCache = GDALTile(path)
+                tileCache = GeoTiffTile(path)
                 metricCached.set(1)
             } else if (!value && tileCache != null) {
                 tileCache = null
@@ -105,7 +105,7 @@ class RaylevationTile(
             throw LookupOutOfBoundsException(point, bounds)
         }
         val result =
-            (tileCache ?: GDALTile(path))
+            (tileCache ?: GeoTiffTile(path))
                 .lookupElevation(point)
         incrementCounter()
         return result

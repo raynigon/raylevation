@@ -1,5 +1,5 @@
 
-task updateMkdocsConfig() {
+tasks.register('updateMkdocsConfig') {
     group = "external"
     doFirst {
         def cfg = project.file(project.file('mkdocs.yml'))
@@ -7,7 +7,7 @@ task updateMkdocsConfig() {
     }
 }
 
-task updateK8sYaml() {
+tasks.register('updateK8sYaml') {
     group = "external"
     doFirst {
         def install = project.file(project.file('deployment/k8s/install-minimum.yaml'))

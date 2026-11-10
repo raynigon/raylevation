@@ -7,7 +7,7 @@ jobs:
     name: "Build Release"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: "Setup Java JDK"
@@ -19,7 +19,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
       - name: Build base image
         run: |
-          docker build -t ghcr.io/raynigon/raylevation-gdal-base:3.11.0 .
+          docker build -t raylevation-base:release .
       - id: vars
         name: "Determine Tag Name"
         run: |
@@ -34,7 +34,7 @@ jobs:
           git config --global user.name "raynigon[bot]"
           git checkout -b release
       - name: "Publish Artifacts"
-        run: "./gradlew :release -Prelease.useAutomaticVersion=true -x check"
+        run: "./gradlew :release -Prelease.useAutomaticVersion=true -x check -Djib.from.image=docker://raylevation-base:release"
         env:
           GITHUB_USERNAME: raynigon
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -97,7 +97,7 @@ jobs:
             {{/pull_requests.dependencies}}
             {{/pull_requests.dependencies.length}}
       - name: "Github Release"
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe #v1
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b #v1
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:

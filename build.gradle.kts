@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URI
 import java.time.OffsetDateTime
 
 plugins {
@@ -13,8 +12,8 @@ plugins {
     id("signing")
     id("maven-publish")
 
-    id("org.springframework.boot") version "4.0.3"
-    id("org.springframework.cloud.contract") version "4.3.1"
+    id("org.springframework.boot") version "4.0.6"
+    id("org.springframework.cloud.contract") version "5.0.3"
     id("io.spring.dependency-management") version "1.1.7"
 
     // Auto Release
@@ -24,7 +23,7 @@ plugins {
     id("org.owasp.dependencycheck") version "12.1.3"
 
     // Docker Container Build
-    id("com.google.cloud.tools.jib") version "3.5.1"
+    id("com.google.cloud.tools.jib") version "3.5.3"
 
     // Linter
     id("pmd")
@@ -33,10 +32,10 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
 
     // Kotlin
-    kotlin("jvm") version "2.2.21"
-    kotlin("plugin.spring") version "2.2.21"
+    kotlin("jvm") version "2.3.10"
+    kotlin("plugin.spring") version "2.3.10"
     kotlin("plugin.jpa") version "2.3.10"
-    kotlin("kapt") version "2.2.21"
+    kotlin("kapt") version "2.3.10"
 
     // Dokka
     id("org.jetbrains.dokka") version "2.1.0"
@@ -54,12 +53,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven {
-        url = URI.create("https://repo.osgeo.org/repository/release/")
-        content {
-            includeGroup("org.gdal")
-        }
-    }
 }
 
 dependencies {
@@ -71,34 +64,31 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-
-    // resilience4j
-    implementation("io.github.resilience4j:resilience4j-all")
-    implementation("io.github.resilience4j:resilience4j-kotlin")
-    implementation("io.github.resilience4j:resilience4j-spring-boot3")
+    // Required at runtime by ecs-logging-access (RestClientCustomizer)
+    implementation("org.springframework.boot:spring-boot-restclient")
 
     // unit-api
-    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:3.0.9")
-    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:3.0.9")
-    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.9")
+    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:4.0.1")
+    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:4.0.1")
+    implementation("com.raynigon.unit-api:unit-api-kotlin:4.0.1")
 
     // Logging
-    implementation("com.raynigon.spring-boot:ecs-logging-app:2.1.13")
-    implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.13")
-    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.13")
+    implementation("com.raynigon.spring-boot:ecs-logging-app:4.0.1")
+    implementation("com.raynigon.spring-boot:ecs-logging-access:4.0.1")
+    implementation("com.raynigon.spring-boot:ecs-logging-async:4.0.1")
 
     // Helpers
-    implementation("org.gdal:gdal:3.11.0")
+    implementation("org.apache.sis.storage:sis-geotiff:1.7")
     implementation("com.github.davidmoten:rtree:0.12")
     implementation("com.github.davidmoten:geo:0.8.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
 
     // Spock
-    testImplementation("org.apache.groovy:groovy:4.0.30")
-    testImplementation(platform("org.spockframework:spock-bom:2.4-M6-groovy-4.0"))
+    testImplementation("org.apache.groovy:groovy:5.0.5")
+    testImplementation(platform("org.spockframework:spock-bom:2.4-groovy-5.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-spring")
 
@@ -115,15 +105,34 @@ dependencies {
     testImplementation("io.github.hakky54:logcaptor:2.12.5")
 
     // Documentation
-    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16")
-    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.9")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:4.0.1")
 }
 
 dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:1.21.4")
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.0.1")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.4")
+        mavenBom("org.springframework.cloud:spring-cloud-contract-dependencies:5.0.3")
     }
+}
+
+// Smoke tests hit real external services (production tile download host, open-elevation.com).
+// They are intentionally kept out of `test`/`check` and are only run via `./gradlew smokeTest`.
+sourceSets {
+    create("smokeTest") {
+        groovy.srcDir("src/smokeTest/groovy")
+        resources.srcDir("src/smokeTest/resources")
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+val smokeTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations["testImplementation"])
+}
+configurations.getByName("smokeTestRuntimeOnly") {
+    extendsFrom(configurations["testRuntimeOnly"])
 }
 
 allOpen {
@@ -167,20 +176,40 @@ tasks {
     named("processContractTestResources") {
         dependsOn("generateContractTests")
     }
+    named("runKtlintCheckOverContractTestSourceSet") {
+        dependsOn("generateContractTests")
+    }
     withType<Test> {
         useJUnitPlatform()
 
-        testClassesDirs +=
-            sourceSets.contractTest
-                .get()
-                .output
-                .classesDirs
-        classpath +=
-            sourceSets.contractTest
-                .get()
-                .runtimeClasspath
+        if (name == "test") {
+            testClassesDirs +=
+                sourceSets.contractTest
+                    .get()
+                    .output
+                    .classesDirs
+            classpath +=
+                sourceSets.contractTest
+                    .get()
+                    .runtimeClasspath
 
-        finalizedBy(withType<JacocoReport>()) // report is always generated after tests run
+            finalizedBy(withType<JacocoReport>()) // report is always generated after tests run
+        }
+    }
+    register<Test>("smokeTest") {
+        description = "Runs smoke tests against real external services (network, slow, not part of `test`/`check`)."
+        group = "verification"
+        testClassesDirs = sourceSets["smokeTest"].output.classesDirs
+        classpath = sourceSets["smokeTest"].runtimeClasspath
+        // Apache SIS 1.7 violates one of its own internal assertions (lock ownership in
+        // ImageFileDirectory.getSampleModel) on the direct read path, disable assertions for SIS only.
+        // Same reason this is disabled for the `test` task in gradle/scripts/test.gradle
+        jvmArgs("-da:org.apache.sis...")
+        outputs.upToDateWhen { false } // always re-run; it's about hitting the real endpoints
+        // Optional override of app.raylevation.srtm.url in Spring's env format (GitHub secret in CI),
+        // forward it explicitly from the Gradle process' environment into the forked test JVM.
+        // Without it, the default from application.yml is used.
+        System.getenv("APP_RAYLEVATION_SRTM_URL")?.takeIf { it.isNotBlank() }?.let { environment("APP_RAYLEVATION_SRTM_URL", it) }
     }
     withType<KotlinCompile> {
         compilerOptions {
@@ -197,12 +226,17 @@ tasks {
             csv.required.set(true)
         }
     }
+    withType<com.github.spotbugs.snom.SpotBugsTask> {
+        // SpotBugs findings are tracked via Codacy's own SpotBugs scan (see ci-main.yml),
+        // which is configured to never fail the build. Mirror that here.
+        ignoreFailures = true
+    }
 }
 
 jib {
     val commitHash: String = System.getenv("COMMIT_HASH") ?: "unknown_commit"
     from {
-        image = "ghcr.io/raynigon/raylevation-gdal-base:3.11.0"
+        image = "ghcr.io/raynigon/raylevation-base:21"
         auth {
             username = System.getenv("REGISTRY_USER")
             password = System.getenv("REGISTRY_PASSWORD")

@@ -2,7 +2,6 @@ package com.raynigon.raylevation.db.exception
 
 import com.raynigon.raylevation.db.tile.TileBounds
 import com.raynigon.raylevation.infrastructure.model.GeoPoint
-import org.gdal.gdal.gdal
 import java.nio.file.Path
 
 /**
@@ -44,11 +43,21 @@ class IncompatibleTileException(
 }
 
 /**
- * If a GDAL error occurs, this exception is thrown
+ * If a GeoTiff file can not be read or written, this exception is thrown
  */
-data class GDALException(
-    val errorNumber: Int,
-    val errorMessage: String,
-) : RaylevationException("GDAL error occured with ErrorNumber=$errorNumber and Message=$errorMessage") {
-    constructor() : this(gdal.GetLastErrorNo(), gdal.GetLastErrorMsg())
+class GeoTiffException(
+    val path: Path,
+    message: String,
+    cause: Throwable? = null,
+) : RaylevationException("Unable to read GeoTiff ($path): $message", cause) {
+    constructor(path: Path, cause: Throwable) : this(path, cause.message ?: cause.javaClass.simpleName, cause)
 }
+
+/**
+ * If a sub tile was requested for an area which is not covered by the tile, this exception is thrown
+ */
+class InvalidSubTileException(
+    val path: Path,
+    val bounds: TileBounds,
+    val requested: TileBounds,
+) : RaylevationException("Tile ($path) with bounds $bounds does not cover the requested area $requested")

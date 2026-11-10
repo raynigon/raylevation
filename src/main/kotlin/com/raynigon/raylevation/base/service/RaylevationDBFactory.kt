@@ -1,12 +1,12 @@
 package com.raynigon.raylevation.base.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.raynigon.raylevation.db.IRaylevationDB
 import com.raynigon.raylevation.db.RaylevationDB
 import com.raynigon.raylevation.db.config.DatabaseConfig
 import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service
+import tools.jackson.databind.ObjectMapper
 import java.nio.file.Files
 
 /**

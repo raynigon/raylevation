@@ -1,16 +1,20 @@
 import java.time.OffsetDateTime
 import java.util.regex.Pattern
 
-task generateVersionClass() {
-    mustRunAfter(clean)
+def generateVersionClass = tasks.register('generateVersionClass') {
+    mustRunAfter(tasks.named('clean'))
     group = 'build'
+    // Capture project values at configuration time, Task.project is not allowed at execution time
+    def baseDirectory = layout.projectDirectory.dir("build/generated/sources/version/java").asFile.toPath()
+    def projectGroup = project.group.toString()
+    def projectName = project.name
+    def projectVersion = project.version.toString()
     doFirst {
-        def targetDirectory = projectDir.toPath().resolve("build/generated/sources/version/java")
         // change package name
-        def packageName = project.group.replace("-", "_") + "." + project.name.replace("-", "_")
-        targetDirectory = targetDirectory.resolve(packageName.replace(".", "/"))
+        def packageName = projectGroup.replace("-", "_") + "." + projectName.replace("-", "_")
+        def targetDirectory = baseDirectory.resolve(packageName.replace(".", "/"))
         targetDirectory.toFile().mkdirs()
-        String version = project.version
+        String version = projectVersion
         Pattern versionPattern = Pattern.compile("^[0-9]+\\.[0-9]+\\.[0-9]+(?>-SNAPSHOT)?\$")
         if (!versionPattern.matcher(version).find()){
             version = "0.0.1-SNAPSHOT"
@@ -19,8 +23,8 @@ task generateVersionClass() {
 import java.time.OffsetDateTime;
 
 public class BuildVersion {
-    public static final String ARTIFACT_ID = "${project.name}";
-    public static final String GROUP_ID = "${project.group}";
+    public static final String ARTIFACT_ID = "${projectName}";
+    public static final String GROUP_ID = "${projectGroup}";
 
 
     public static final String VERSION = "${version}";
@@ -33,4 +37,4 @@ public class BuildVersion {
     }
 }
 
-tasks.getByName('compileJava').dependsOn(generateVersionClass)
+tasks.named('compileJava') { dependsOn(generateVersionClass) }

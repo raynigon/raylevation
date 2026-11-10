@@ -1,6 +1,6 @@
 package com.raynigon.raylevation.db.lock
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import com.raynigon.raylevation.infrastructure.configuration.JacksonConfiguration
 import nl.altindag.log.LogCaptor
 import spock.lang.Shared

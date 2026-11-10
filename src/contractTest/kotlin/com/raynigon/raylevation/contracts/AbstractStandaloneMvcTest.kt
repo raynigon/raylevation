@@ -9,7 +9,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.core.convert.converter.Converter
 import org.springframework.format.support.DefaultFormattingConversionService
 import org.springframework.format.support.FormattingConversionService
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter
 
@@ -20,7 +20,7 @@ import org.springframework.validation.beanvalidation.SpringValidatorAdapter
  * which in turn means that it's not possible to use bean validation.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-abstract class AbstractStandaloneMvcTest<T> {
+abstract class AbstractStandaloneMvcTest<T : Any> {
     private val validator = Validation.buildDefaultValidatorFactory().validator
 
     private val conversionService: FormattingConversionService = DefaultFormattingConversionService()
@@ -46,8 +46,7 @@ abstract class AbstractStandaloneMvcTest<T> {
         additionalConverters.forEach { conversionService.addConverter(it) }
 
         // Message Converter
-        val messageConverter = MappingJackson2HttpMessageConverter()
-        messageConverter.objectMapper = JacksonConfiguration().objectMapper()
+        val messageConverter = JacksonJsonHttpMessageConverter(JacksonConfiguration().objectMapper())
 
         // Create Standalone Setup
         val standaloneMockMvcBuilder =

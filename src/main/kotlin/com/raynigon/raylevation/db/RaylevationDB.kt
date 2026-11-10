@@ -1,11 +1,10 @@
 package com.raynigon.raylevation.db
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry.Rectangle
 import com.raynigon.raylevation.db.config.DatabaseConfig
 import com.raynigon.raylevation.db.exception.TileNotFoundException
-import com.raynigon.raylevation.db.gdal.GDALTile
+import com.raynigon.raylevation.db.geotiff.GeoTiffTile
 import com.raynigon.raylevation.db.lock.IRaylevationDBLock
 import com.raynigon.raylevation.db.lock.RaylevationDBLock
 import com.raynigon.raylevation.db.lock.isLocked
@@ -21,6 +20,7 @@ import com.raynigon.raylevation.infrastructure.model.GeoPoint
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.ObjectMapper
 import java.io.Closeable
 import java.io.FileNotFoundException
 import java.nio.file.Files
@@ -63,11 +63,11 @@ interface IRaylevationDB : Closeable {
     fun syncCache()
 
     /**
-     * Add [GDALTile] to the database
+     * Add [GeoTiffTile] to the database
      *
      * @param tile    the tile which should be added
      */
-    fun addTile(tile: GDALTile)
+    fun addTile(tile: GeoTiffTile)
 
     /**
      *  Stores the current state of the database on disk.
@@ -110,9 +110,9 @@ class RaylevationDB(
     // Observability
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val lookupTimer = registry.timer("app.raylevation.db.lookups")
-    private val cacheSizeGauge = registry.gauge("app.raylevation.db.cache.size", AtomicInteger())!!
-    private val totalTilesGauge = registry.gauge("app.raylevation.db.tiles.total", AtomicInteger())!!
-    private val cachedTilesGauge = registry.gauge("app.raylevation.db.tiles.cached", AtomicInteger())!!
+    private val cacheSizeGauge = registry.gauge("app.raylevation.db.cache.size", AtomicInteger())
+    private val totalTilesGauge = registry.gauge("app.raylevation.db.tiles.total", AtomicInteger())
+    private val cachedTilesGauge = registry.gauge("app.raylevation.db.tiles.cached", AtomicInteger())
 
     // Functional
     private var index: RTree<IRaylevationTile, Rectangle> = RTree.create()
@@ -208,7 +208,7 @@ class RaylevationDB(
         logger.debug("Cache Status: $cachedTiles/$totalTiles Tiles   $cachedPercent%")
     }
 
-    override fun addTile(tile: GDALTile) {
+    override fun addTile(tile: GeoTiffTile) {
         if (!lock.isLocked()) {
             TODO("Raise Exception, modification is not allowed without lock")
         }
@@ -226,7 +226,7 @@ class RaylevationDB(
                 bounds.yMin,
                 bounds.xMax,
             )
-        // Copy GDAL Tile to the database directory
+        // Copy GeoTiff Tile to the database directory
         val tilePath = tilesFolder.resolve("$name$GEOTIFF_FILE_SUFFIX")
         tile.saveTo(tilePath)
         RaylevationTile(name, tilePath, bounds, registry).let(::addTile)
