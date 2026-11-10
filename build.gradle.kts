@@ -13,8 +13,8 @@ plugins {
     id("signing")
     id("maven-publish")
 
-    id("org.springframework.boot") version "4.0.3"
-    id("org.springframework.cloud.contract") version "4.3.1"
+    id("org.springframework.boot") version "4.0.6"
+    id("org.springframework.cloud.contract") version "5.0.3"
     id("io.spring.dependency-management") version "1.1.7"
 
     // Auto Release
@@ -24,7 +24,7 @@ plugins {
     id("org.owasp.dependencycheck") version "12.1.3"
 
     // Docker Container Build
-    id("com.google.cloud.tools.jib") version "3.5.1"
+    id("com.google.cloud.tools.jib") version "3.5.3"
 
     // Linter
     id("pmd")
@@ -71,35 +71,31 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-
-    // resilience4j
-    implementation("io.github.resilience4j:resilience4j-all")
-    implementation("io.github.resilience4j:resilience4j-kotlin")
-    implementation("io.github.resilience4j:resilience4j-spring-boot3")
+    // Required at runtime by ecs-logging-access (RestClientCustomizer)
+    implementation("org.springframework.boot:spring-boot-restclient")
 
     // unit-api
-    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:3.0.9")
-    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:3.0.9")
-    implementation("com.raynigon.unit-api:unit-api-kotlin:3.0.9")
+    implementation("com.raynigon.unit-api:spring-boot-jackson-starter:4.0.1")
+    implementation("com.raynigon.unit-api:spring-boot-jpa-starter:4.0.1")
+    implementation("com.raynigon.unit-api:unit-api-kotlin:4.0.1")
 
     // Logging
-    implementation("com.raynigon.spring-boot:ecs-logging-app:2.1.13")
-    implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.13")
-    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.13")
+    implementation("com.raynigon.spring-boot:ecs-logging-app:4.0.1")
+    implementation("com.raynigon.spring-boot:ecs-logging-access:4.0.1")
+    implementation("com.raynigon.spring-boot:ecs-logging-async:4.0.1")
 
     // Helpers
     implementation("org.gdal:gdal:3.11.0")
     implementation("com.github.davidmoten:rtree:0.12")
     implementation("com.github.davidmoten:geo:0.8.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
 
     // Spock
-    testImplementation("org.apache.groovy:groovy:4.0.30")
-    testImplementation(platform("org.spockframework:spock-bom:2.4-M6-groovy-4.0"))
+    testImplementation("org.apache.groovy:groovy:5.0.5")
+    testImplementation(platform("org.spockframework:spock-bom:2.4-groovy-5.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-spring")
 
@@ -116,14 +112,15 @@ dependencies {
     testImplementation("io.github.hakky54:logcaptor:2.12.5")
 
     // Documentation
-    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16")
-    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:3.0.9")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+    testImplementation("com.raynigon.unit-api:spring-boot-springdoc-starter:4.0.1")
 }
 
 dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:1.21.4")
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.0.1")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.4")
+        mavenBom("org.springframework.cloud:spring-cloud-contract-dependencies:5.0.3")
     }
 }
 

@@ -11,7 +11,6 @@ release {
     }
 }
 
-tasks.getByName("afterReleaseBuild").dependsOn(
-        tasks.getByName("updateMkdocsConfig"),
-        tasks.getByName("updateK8sYaml")
-)
+tasks.named("afterReleaseBuild") {
+    dependsOn("updateMkdocsConfig", "updateK8sYaml")
+}

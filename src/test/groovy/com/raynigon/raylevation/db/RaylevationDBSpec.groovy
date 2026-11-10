@@ -2,7 +2,7 @@ package com.raynigon.raylevation.db
 
 import static com.raynigon.unit.api.core.units.si.SISystemUnitsConstants.Metre
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import com.raynigon.raylevation.db.config.DatabaseConfig
 import com.raynigon.raylevation.db.exception.TileNotFoundException
 import com.raynigon.raylevation.db.gdal.GDALTile

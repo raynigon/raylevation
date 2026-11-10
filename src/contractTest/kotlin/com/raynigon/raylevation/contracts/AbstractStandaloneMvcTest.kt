@@ -9,7 +9,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.core.convert.converter.Converter
 import org.springframework.format.support.DefaultFormattingConversionService
 import org.springframework.format.support.FormattingConversionService
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter
 
@@ -46,8 +46,7 @@ abstract class AbstractStandaloneMvcTest<T : Any> {
         additionalConverters.forEach { conversionService.addConverter(it) }
 
         // Message Converter
-        val messageConverter = MappingJackson2HttpMessageConverter()
-        messageConverter.objectMapper = JacksonConfiguration().objectMapper()
+        val messageConverter = JacksonJsonHttpMessageConverter(JacksonConfiguration().objectMapper())
 
         // Create Standalone Setup
         val standaloneMockMvcBuilder =

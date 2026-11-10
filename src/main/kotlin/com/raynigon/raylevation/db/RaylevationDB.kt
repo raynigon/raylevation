@@ -1,6 +1,5 @@
 package com.raynigon.raylevation.db
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry.Rectangle
 import com.raynigon.raylevation.db.config.DatabaseConfig
@@ -21,6 +20,7 @@ import com.raynigon.raylevation.infrastructure.model.GeoPoint
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.ObjectMapper
 import java.io.Closeable
 import java.io.FileNotFoundException
 import java.nio.file.Files
@@ -110,9 +110,9 @@ class RaylevationDB(
     // Observability
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val lookupTimer = registry.timer("app.raylevation.db.lookups")
-    private val cacheSizeGauge = registry.gauge("app.raylevation.db.cache.size", AtomicInteger())!!
-    private val totalTilesGauge = registry.gauge("app.raylevation.db.tiles.total", AtomicInteger())!!
-    private val cachedTilesGauge = registry.gauge("app.raylevation.db.tiles.cached", AtomicInteger())!!
+    private val cacheSizeGauge = registry.gauge("app.raylevation.db.cache.size", AtomicInteger())
+    private val totalTilesGauge = registry.gauge("app.raylevation.db.tiles.total", AtomicInteger())
+    private val cachedTilesGauge = registry.gauge("app.raylevation.db.tiles.cached", AtomicInteger())
 
     // Functional
     private var index: RTree<IRaylevationTile, Rectangle> = RTree.create()

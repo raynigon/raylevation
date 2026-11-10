@@ -22,10 +22,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install Java 21 and unrar
         run: |
+          rm -f /etc/apt/sources.list.d/*arrow*
           apt-get update
           apt-get install -y --no-install-recommends openjdk-21-jdk-headless unrar
 
@@ -37,6 +38,6 @@ jobs:
           JAVA_HOME: /usr/lib/jvm/java-21-openjdk-amd64
 
       - name: Pre-warm Gradle dependency cache
-        run: ./gradlew dependencies --configuration compileClasspath --configuration testCompileClasspath --configuration runtimeClasspath
+        run: ./gradlew dependencies
         env:
           JAVA_HOME: /usr/lib/jvm/java-21-openjdk-amd64
