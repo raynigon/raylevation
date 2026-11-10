@@ -14,7 +14,7 @@ plugins {
     id("maven-publish")
 
     id("org.springframework.boot") version "4.0.6"
-    id("org.springframework.cloud.contract") version "4.3.1"
+    id("org.springframework.cloud.contract") version "5.0.3"
     id("io.spring.dependency-management") version "1.1.7"
 
     // Auto Release
@@ -72,20 +72,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    // resilience4j
-    implementation("io.github.resilience4j:resilience4j-all")
-    implementation("io.github.resilience4j:resilience4j-kotlin")
-    implementation("io.github.resilience4j:resilience4j-spring-boot3")
-
     // unit-api
     implementation("com.raynigon.unit-api:spring-boot-jackson-starter:4.0.1")
     implementation("com.raynigon.unit-api:spring-boot-jpa-starter:4.0.1")
     implementation("com.raynigon.unit-api:unit-api-kotlin:4.0.1")
 
     // Logging
-    implementation("com.raynigon.spring-boot:ecs-logging-app:2.1.13")
-    implementation("com.raynigon.spring-boot:ecs-logging-access:2.1.13")
-    implementation("com.raynigon.spring-boot:ecs-logging-async:2.1.13")
+    implementation("com.raynigon.spring-boot:ecs-logging-app:4.0.1")
+    implementation("com.raynigon.spring-boot:ecs-logging-access:4.0.1")
+    implementation("com.raynigon.spring-boot:ecs-logging-async:4.0.1")
 
     // Helpers
     implementation("org.gdal:gdal:3.11.0")
@@ -122,7 +117,8 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:1.21.4")
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.0.1")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.4")
+        mavenBom("org.springframework.cloud:spring-cloud-contract-dependencies:5.0.3")
     }
 }
 

@@ -17,6 +17,8 @@ jobs:
           rm -f /etc/apt/sources.list.d/*arrow*
           apt-get update
           apt-get install -y --no-install-recommends unrar openjdk-21-jdk-headless
+      - name: "Show GDAL JNI location"
+        run: find / -name 'libgdalalljni*' -not -path '/proc/*' 2>/dev/null || true
       - name: Gradle Command - test
         run: "./gradlew clean test"
         env:

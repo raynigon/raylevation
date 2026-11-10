@@ -1,6 +1,8 @@
 test {
     useJUnitPlatform()
-    jvmArgs "-Djava.library.path=/usr/lib/jni"
+    // Possible install locations of the GDAL JNI library (libgdalalljni) in the GDAL container images
+    def jniDirectories = ["/usr/lib/jni", "/usr/lib/x86_64-linux-gnu/jni", "/usr/lib/aarch64-linux-gnu/jni", "/usr/share/java", "/usr/local/lib"]
+    jvmArgs "-Djava.library.path=${jniDirectories.join(File.pathSeparator)}"
     testLogging {
         events "failed"
         exceptionFormat = "full"
