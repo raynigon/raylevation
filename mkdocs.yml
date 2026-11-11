@@ -25,6 +25,13 @@ markdown_extensions:
   - admonition
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
+  - API Reference: api.md
+  - Configuration: configuration.md
+  - CLI Reference: cli.md
+  - Architecture: architecture.md
+  - Deployment: deployment.md
   - Contribution: contribution.md
+  - Code Documentation: 'https://raylevation.raynigon.com/dokka/'
 extra:
   latest_version: 0.0.3
