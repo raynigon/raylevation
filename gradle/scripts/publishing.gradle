@@ -11,7 +11,8 @@ publishing {
     repositories {
         maven {
             name = "OSSRH" // OSS Repository Hosting
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            // Central Portal OSSRH Staging API, the staged upload is transferred to the portal in cd-release.yml
+            url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
             credentials {
                 username = System.getenv("OSSRH_USERNAME") ?: null
                 password = System.getenv("OSSRH_PASSWORD") ?: null
@@ -63,11 +64,16 @@ publishing {
                 rootNode.remove((Node) ((Node) rootNode).get("dependencyManagement").get(0))
                 def dependenciesNode = rootNode.appendNode('dependencies')
 
+                // BOM managed dependencies have no declared version, use the resolved one instead
+                def resolvedVersions = project.configurations.runtimeClasspath.incoming.resolutionResult.allComponents
+                        .findAll { it.moduleVersion != null }
+                        .collectEntries { ["${it.moduleVersion.group}:${it.moduleVersion.name}".toString(), it.moduleVersion.version] }
+
                 def addDependency = { dependency, scope ->
                     dependenciesNode.appendNode('dependency').with {
                         appendNode('groupId', dependency.group)
                         appendNode('artifactId', dependency.name)
-                        appendNode('version', dependency.version)
+                        appendNode('version', dependency.version ?: resolvedVersions["${dependency.group}:${dependency.name}".toString()])
                         appendNode('scope', scope)
                     }
                 }

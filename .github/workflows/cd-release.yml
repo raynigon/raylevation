@@ -34,7 +34,8 @@ jobs:
           git config --global user.name "raynigon[bot]"
           git checkout -b release
       - name: "Publish Artifacts"
-        run: "./gradlew :release -Prelease.useAutomaticVersion=true -x check -Djib.from.image=docker://raylevation-base:release"
+        # Tests are not executed during the release, they already ran in CI
+        run: "./gradlew :release -Prelease.useAutomaticVersion=true -x check -x test -x contractTest -x smokeTest -Djib.from.image=docker://raylevation-base:release"
         env:
           GITHUB_USERNAME: raynigon
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,6 +47,18 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           IMAGE_NAME: ghcr.io/raynigon/raylevation
           COMMIT_HASH: ${{ github.sha }}
+      # Transfer the staged upload from the OSSRH Staging API to the Central Portal,
+      # the deployment then needs to be published manually on https://central.sonatype.com/publishing/deployments
+      - name: "Release to Maven Central"
+        run: |
+          curl \
+            -f \
+            -X POST \
+            -u "${OSSRH_USERNAME}:${OSSRH_PASSWORD}" \
+            https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/com.raynigon.raylevation
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       - name: Copy Assets
         run: |
           mkdir -p build/assets/

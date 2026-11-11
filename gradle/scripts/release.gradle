@@ -4,7 +4,10 @@ release {
     tagCommitMessage = "[Release] Version:"
     newVersionCommitMessage = "[Release] Update Version:"
     tagTemplate = 'v${version}'
-    buildTasks = ['jib', 'jibBuildTar', 'assemble', 'javadocJar', 'publish']
+    // Only build and publish the released artifacts. 'assemble' is deliberately not used,
+    // because it pulls in the Spring Cloud Contract stub generation (generateClientStubs/verifierStubsJar),
+    // and no test or verification task should be able to fail a release.
+    buildTasks = ['bootJar', 'jar', 'sourcesJar', 'javadocJar', 'jib', 'jibBuildTar', 'publish']
 
     git {
         requireBranch.set("release")
