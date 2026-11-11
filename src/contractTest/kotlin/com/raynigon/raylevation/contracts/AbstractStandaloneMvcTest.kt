@@ -52,7 +52,7 @@ abstract class AbstractStandaloneMvcTest<T : Any> {
         val standaloneMockMvcBuilder =
             MockMvcBuilders
                 .standaloneSetup(controller)
-                .setControllerAdvice(controllerAdvices)
+                .setControllerAdvice(*controllerAdvices)
                 .setConversionService(conversionService)
                 .setValidator(SpringValidatorAdapter(validator))
                 .setMessageConverters(messageConverter)

@@ -141,11 +141,11 @@ allOpen {
 }
 
 contracts {
-    failOnNoContracts.set(false)
+    failOnNoContracts.set(true)
 
     includedFiles.set(
         listOf(
-            "v1/*.yaml",
+            "v1/**/*.yaml",
         ),
     )
 
@@ -155,7 +155,7 @@ contracts {
     val namespace = "com.raynigon.raylevation.contracts"
 
     baseClassMappings.baseClassMapping(
-        ".*\\.v1\\.lookup",
+        "v1\\.lookup",
         "$namespace.RaylevationControllerV1Base",
     )
 }

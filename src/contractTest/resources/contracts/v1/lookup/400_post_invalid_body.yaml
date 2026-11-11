@@ -11,5 +11,5 @@ response:
   headers:
     Content-Type: application/json
   body:
-    status: BAD_REQUEST
+    status: 400 BAD_REQUEST
     message: InvalidBody

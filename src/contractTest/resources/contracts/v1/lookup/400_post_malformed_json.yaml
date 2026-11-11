@@ -1,0 +1,14 @@
+name: Get elevation for location with malformed JSON body
+request:
+  url: /api/v1/lookup
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: '{"locations": ['
+response:
+  status: 400
+  headers:
+    Content-Type: application/json
+  body:
+    status: 400 BAD_REQUEST
+    message: InvalidBody

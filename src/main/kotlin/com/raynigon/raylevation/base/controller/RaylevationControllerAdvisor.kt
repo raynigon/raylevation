@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseStatus
 
 /**
  * Controller Advisor the [RaylevationController]
@@ -22,7 +21,6 @@ class RaylevationControllerAdvisor {
     /**
      * Handle a [HttpMessageNotReadableException] by generating an [ApiError] with Status [HttpStatus.BAD_REQUEST].
      */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     fun handleHttpMessageNotReadableException(exception: HttpMessageNotReadableException): ResponseEntity<ApiError> {
         logger.info("Given request body is not valid", exception)
