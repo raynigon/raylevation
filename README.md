@@ -11,6 +11,26 @@
 
 ## [Read the documentation here](http://raylevation.raynigon.com)
 
+## Quick Start
+
+```shell
+# 1. Download and prepare the elevation data
+docker run --rm -v "$(pwd)/data:/data/" \
+  -e RAYLEVATION_CLI_CMD=update-srtm -e APP_RAYLEVATION_DB_PATH=/data/ \
+  ghcr.io/raynigon/raylevation:latest
+
+# 2. Start the server
+docker run --rm -p 8080:8080 -v "$(pwd)/data:/data/" \
+  -e APP_RAYLEVATION_DB_PATH=/data/ \
+  ghcr.io/raynigon/raylevation:latest
+
+# 3. Look up an elevation
+curl "http://localhost:8080/api/v1/lookup?locations=45.9763,7.6586"
+```
+
+See [Getting Started](http://raylevation.raynigon.com/getting-started/) for running from source,
+the API reference, configuration and Kubernetes deployment.
+
 ## License
 [Apache License 2.0](LICENSE)
 
